@@ -12,7 +12,7 @@ const Page = () => {
     { title: 'DAILY STATE', icon: <ImStatsBars className="text-[60px] text-zinc-800" /> },
     { title: 'UPLOAD EXCEL NOBAT LIST', icon: <SiMicrosoftexcel className="text-[60px] text-zinc-800" /> },
     { title: 'UPLOAD EXCEL LOCAL RESIDENTS', icon: <SiMicrosoftexcel className="text-[60px] text-zinc-800" /> },
-    { title: 'COMPARISON OLD NOBATS', icon: <MdOutlineCompareArrows className="text-[60px] text-zinc-800" /> },
+    // { title: 'COMPARISON OLD NOBATS', icon: <MdOutlineCompareArrows className="text-[60px] text-zinc-800" /> },
   ]
   return (
     <div className="mt-10">

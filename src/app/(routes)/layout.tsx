@@ -8,6 +8,11 @@ import { FaRegUser } from "react-icons/fa6";
 import { IoIosMenu } from "react-icons/io";
 import { RxCross1 } from "react-icons/rx";
 import { usePathname } from 'next/navigation'
+import { TiHome } from "react-icons/ti";
+import { MdToken, MdFormatListBulletedAdd } from "react-icons/md";
+import { HiOutlineArrowUpRight, HiOutlineArrowDownLeft } from "react-icons/hi2";
+import { TbReportSearch } from "react-icons/tb";
+
 
 export default function RootLayout({
     children,
@@ -19,12 +24,12 @@ export default function RootLayout({
     const pathname = usePathname()
 
     const links = [
-        { href: '/', text: 'Home' },
-        { href: '/tokendata', text: 'Token Data' },
-        { href: '/paktoiran', text: 'Pak TO Iran' },
-        { href: '/irantopak', text: 'Iran TO Pak' },
-        { href: '/status', text: 'Status' },
-        { href: '/manualentry', text: 'Manual Entry' } // Update href as needed
+        { href: '/', text: 'Home', icon: <TiHome className="text-xl" /> },
+        { href: '/tokendata', text: 'Token Data', icon: < MdToken className="text-xl" /> },
+        { href: '/paktoiran', text: 'Pak TO Iran', icon: <HiOutlineArrowUpRight className="text-xl" /> },
+        { href: '/irantopak', text: 'Iran TO Pak', icon: <HiOutlineArrowDownLeft className="text-xl" /> },
+        { href: '/status', text: 'Status', icon: <TbReportSearch className="text-xl" /> },
+        { href: '/manualentry', text: 'Manual Entry', icon: <MdFormatListBulletedAdd className="text-xl" /> } // Update href as needed
     ];
 
     const isActive = (href: string) => href === pathname;
@@ -44,14 +49,17 @@ export default function RootLayout({
                 <ul className="mt-7">
                     {links.map((link, index) => (
                         <Link href={link.href} key={index}>
-                            <li className={`py-3 px-6 text-white hover:bg-[#00000025] border-b border-zinc-200 cursor-pointer font-semibold ${isActive(link.href) ? 'bg-[#00000040] hover:bg-[#00000040]' : ''}`}>
-                                {link.text}
+                            <li className={`py-3 px-6 flex gap-3 items-center text-white hover:bg-[#00000025] border-b border-zinc-200 cursor-pointer font-semibold ${isActive(link.href) ? 'bg-[#00000040] hover:bg-[#00000040]' : ''}`}>
+                                {link.icon} {link.text}
                             </li>
                         </Link>
                     ))}
                 </ul>
             </div>
-            <div className="custom_width">
+            <div className="custom_width relative h-screen overflow-y-auto">
+                <div className="w-full h-full fixed top-0 left-0 flex justify-center items-center -z-10">
+                    <Image src={'/logo.png'} alt="watermark" width={500} height={500} className="w-[500px] opacity-5" />
+                </div>
                 <div className='w-full flex items-center justify-between py-5 px-5 sm:px-10 border-b'>
                     <div className="flex gap-5 items-center">
                         <IoIosMenu className="block lg:hidden cursor-pointer text-2xl text-zinc-800" onClick={() => setOpen(true)} />

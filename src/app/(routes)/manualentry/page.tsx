@@ -73,98 +73,98 @@ function ManualEntry() {
                 <form action="">
                     <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-7'>
                         <div className='flex flex-col gap-1'>
-                            <label htmlFor="select" className='text-sm text-zinc-700 font-semibold'>Select</label>
+                            <label htmlFor="select" className='text-sm text-zinc-700 font-semibold'>Select / منتخب کریں۔</label>
                             <select name="" id="select" value={type} onChange={(e) => setType(e.target.value)} className='border border-zinc-300 text-zinc-800 focus:outline-none py-3 px-4 rounded-lg text-base'>
                                 <option value="local">Local</option>
-                                <option value="official">Official</option>
+                                <option value="fuelTrade">Fuel Trade</option>
                             </select>
                         </div>
                         <div className='flex flex-col gap-1'>
-                            <label htmlFor="name" className='text-sm text-zinc-700 font-semibold'>Name</label>
+                            <label htmlFor="name" className='text-sm text-zinc-700 font-semibold'>Name / نام</label>
                             <input type="text" id='name' className='border border-zinc-300 text-zinc-800 focus:outline-none py-3 px-4 rounded-lg text-base' />
                         </div>
 
                         <div className='flex flex-col gap-1'>
-                            <label htmlFor="fName" className='text-sm text-zinc-700 font-semibold'>Father Name</label>
+                            <label htmlFor="fName" className='text-sm text-zinc-700 font-semibold'>Father Name / والد کا نام</label>
                             <input type="text" id='fName' className='border border-zinc-300 text-zinc-800 focus:outline-none py-3 px-4 rounded-lg text-base' />
                         </div>
 
                         <div className='flex flex-col gap-1'>
-                            <label htmlFor="cnic" className='text-sm text-zinc-700 font-semibold'>CNIC</label>
+                            <label htmlFor="cnic" className='text-sm text-zinc-700 font-semibold'>CNIC / شناختی کارڈ</label>
                             <input type="text" id='cnic' className='border border-zinc-300 text-zinc-800 focus:outline-none py-3 px-4 rounded-lg text-base' />
                         </div>
 
                         <div className='flex flex-col gap-1'>
-                            <label htmlFor="address" className='text-sm text-zinc-700 font-semibold'>Address</label>
+                            <label htmlFor="address" className='text-sm text-zinc-700 font-semibold'>Address / پتہ</label>
                             <textarea id="address" className='border border-zinc-300 text-zinc-800 focus:outline-none py-3 px-4 rounded-lg text-base' rows={1}></textarea>
                         </div>
 
                         <div className='flex flex-col gap-1'>
-                            <label htmlFor="dateTimeOut" className='text-sm text-zinc-700 font-semibold'>Date Time Out</label>
+                            <label htmlFor="dateTimeOut" className='text-sm text-zinc-700 font-semibold'>Date Time Out / آنے کی تاریخ اور وقت</label>
                             <input type="datetime-local" id='dateTimeOut' className='border border-zinc-300 text-zinc-800 focus:outline-none py-3 px-4 rounded-lg text-base' />
                         </div>
 
                         <div className='flex flex-col gap-1'>
-                            <label htmlFor="dateTimeIn" className='text-sm text-zinc-700 font-semibold'>Date Time In</label>
+                            <label htmlFor="dateTimeIn" className='text-sm text-zinc-700 font-semibold'>Date Time In / آنے کی تاریخ اور وقت</label>
                             <input type="datetime-local" id='dateTimeIn' className='border border-zinc-300 text-zinc-800 focus:outline-none py-3 px-4 rounded-lg text-base' />
                         </div>
                         {
                             type === 'local' ?
                                 <>
                                     <div className='flex flex-col gap-1'>
-                                        <label htmlFor="vehsType" className='text-sm text-zinc-700 font-semibold'>Vehicle Type</label>
+                                        <label htmlFor="vehsType" className='text-sm text-zinc-700 font-semibold'>Vehicle Type / گاڑی کی قسم</label>
                                         <input type="text" id='vehsType' className='border border-zinc-300 text-zinc-800 focus:outline-none py-3 px-4 rounded-lg text-base' />
                                     </div>
                                     <div className='flex flex-col gap-1'>
-                                        <label htmlFor="addressOfGuest" className='text-sm text-zinc-700 font-semibold'>Address of Guest</label>
-                                        <input type="text" id='addressOfGuest' className='border border-zinc-300 text-zinc-800 focus:outline-none py-3 px-4 rounded-lg text-base' />
+                                        <label htmlFor="accompanyingFamilyMembersName" className='text-sm text-zinc-700 font-semibold'>Accompanying Family Members Name / ھمرا کا نام</label>
+                                        <input type="text" id='accompanyingFamilyMembersName' className='border border-zinc-300 text-zinc-800 focus:outline-none py-3 px-4 rounded-lg text-base' />
                                     </div>
                                     <div className='flex flex-col gap-1'>
-                                        <label htmlFor="cnicOfGuest" className='text-sm text-zinc-700 font-semibold'>CNIC of Guest</label>
-                                        <input type="text" id='cnicOfGuest' className='border border-zinc-300 text-zinc-800 focus:outline-none py-3 px-4 rounded-lg text-base' />
-                                    </div>
-                                    <div className='flex flex-col gap-1'>
-                                        <label htmlFor="guestName" className='text-sm text-zinc-700 font-semibold'>Guest Name</label>
-                                        <input type="text" id='guestName' className='border border-zinc-300 text-zinc-800 focus:outline-none py-3 px-4 rounded-lg text-base' />
-                                    </div>
-                                    <div className='flex flex-col gap-1'>
-                                        <label htmlFor="childrenNos" className='text-sm text-zinc-700 font-semibold'>Number of Children</label>
-                                        <input type="number" id='childrenNos' className='border border-zinc-300 text-zinc-800 focus:outline-none py-3 px-4 rounded-lg text-base' />
-                                    </div>
-                                    <div className='flex flex-col gap-1'>
-                                        <label htmlFor="cnicOfFamilyMembers" className='text-sm text-zinc-700 font-semibold'>CNIC of Family Members</label>
+                                        <label htmlFor="cnicOfFamilyMembers" className='text-sm text-zinc-700 font-semibold'>CNIC of Family Members / خاندان کا شناختی کارڈ</label>
                                         <input type="text" id='cnicOfFamilyMembers' className='border border-zinc-300 text-zinc-800 focus:outline-none py-3 px-4 rounded-lg text-base' />
                                     </div>
                                     <div className='flex flex-col gap-1'>
-                                        <label htmlFor="relation" className='text-sm text-zinc-700 font-semibold'>Relation</label>
+                                        <label htmlFor="relation" className='text-sm text-zinc-700 font-semibold'>Relation / ر شتہ</label>
                                         <input type="text" id='relation' className='border border-zinc-300 text-zinc-800 focus:outline-none py-3 px-4 rounded-lg text-base' />
                                     </div>
                                     <div className='flex flex-col gap-1'>
-                                        <label htmlFor="accompanyingFamilyMembersName" className='text-sm text-zinc-700 font-semibold'>Accompanying Family Members Name</label>
-                                        <input type="text" id='accompanyingFamilyMembersName' className='border border-zinc-300 text-zinc-800 focus:outline-none py-3 px-4 rounded-lg text-base' />
+                                        <label htmlFor="guestName" className='text-sm text-zinc-700 font-semibold'>Guest Name / مہمان کا نام</label>
+                                        <input type="text" id='guestName' className='border border-zinc-300 text-zinc-800 focus:outline-none py-3 px-4 rounded-lg text-base' />
+                                    </div>
+                                    <div className='flex flex-col gap-1'>
+                                        <label htmlFor="cnicOfGuest" className='text-sm text-zinc-700 font-semibold'>CNIC of Guest / شناختی نمبر مہمان کا</label>
+                                        <input type="text" id='cnicOfGuest' className='border border-zinc-300 text-zinc-800 focus:outline-none py-3 px-4 rounded-lg text-base' />
+                                    </div>
+                                    <div className='flex flex-col gap-1'>
+                                        <label htmlFor="addressOfGuest" className='text-sm text-zinc-700 font-semibold'>Address of Guest / مہمان کا پتہ</label>
+                                        <input type="text" id='addressOfGuest' className='border border-zinc-300 text-zinc-800 focus:outline-none py-3 px-4 rounded-lg text-base' />
+                                    </div>
+                                    <div className='flex flex-col gap-1'>
+                                        <label htmlFor="childrenNos" className='text-sm text-zinc-700 font-semibold'>Number of Children / بچوں کی تعداد</label>
+                                        <input type="number" id='childrenNos' className='border border-zinc-300 text-zinc-800 focus:outline-none py-3 px-4 rounded-lg text-base' />
                                     </div>
                                 </>
 
                                 :
                                 <>
                                     <div className='flex flex-col gap-1'>
-                                        <label htmlFor="driverName" className='text-sm text-zinc-700 font-semibold'>Driver Name</label>
+                                        <label htmlFor="driverName" className='text-sm text-zinc-700 font-semibold'>Driver Name / گاڈی چلانے والے کا نام</label>
                                         <input type="text" id='driverName' className='border border-zinc-300 text-zinc-800 focus:outline-none py-3 px-4 rounded-lg text-base' />
                                     </div>
                                     <div className='flex flex-col gap-1'>
-                                        <label htmlFor="secondSeater" className='text-sm text-zinc-700 font-semibold'>Second Seater</label>
+                                        <label htmlFor="secondSeater" className='text-sm text-zinc-700 font-semibold'>Second Seater / دوسری ثیٹر</label>
                                         <input type="text" id='secondSeater' className='border border-zinc-300 text-zinc-800 focus:outline-none py-3 px-4 rounded-lg text-base' />
                                     </div>
                                     <div className='flex flex-col gap-1'>
-                                        <label htmlFor="chassisNumber" className='text-sm text-zinc-700 font-semibold'>Chassis Number</label>
+                                        <label htmlFor="chassisNumber" className='text-sm text-zinc-700 font-semibold'>Chassis Number / باڈی نمبر</label>
                                         <input type="text" id='chassisNumber' className='border border-zinc-300 text-zinc-800 focus:outline-none py-3 px-4 rounded-lg text-base' />
                                     </div>
                                     <div className='flex flex-col gap-1'>
-                                        <label htmlFor="engineNumber" className='text-sm text-zinc-700 font-semibold'>Engine Number</label>
+                                        <label htmlFor="engineNumber" className='text-sm text-zinc-700 font-semibold'>Engine Number / انجن نامبر</label>
                                         <input type="text" id='engineNumber' className='border border-zinc-300 text-zinc-800 focus:outline-none py-3 px-4 rounded-lg text-base' />
                                     </div>
                                     <div className='flex flex-col gap-1'>
-                                        <label htmlFor="regnNo" className='text-sm text-zinc-700 font-semibold'>Regn No</label>
+                                        <label htmlFor="regnNo" className='text-sm text-zinc-700 font-semibold'>Regn No / درج نمبر</label>
                                         <input type="text" id='regnNo' className='border border-zinc-300 text-zinc-800 focus:outline-none py-3 px-4 rounded-lg text-base' />
                                     </div>
                                 </>

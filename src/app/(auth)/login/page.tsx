@@ -35,12 +35,15 @@ export default function Login() {
                 </div>
             }
             <div className="grid grid-cols-1 md:grid-cols-2">
+                <Toaster />
                 <div className="hidden md:flex flex-col justify-center items-center min-h-screen bg-primary">
                     <h1 className="text-4xl lg:text-5xl font-bold text-white w-[90%] lg:w-[80%] text-center">WELCOME TO RAJAY XING</h1>
                     <Image src={'/logo.png'} alt='logo' className='w-[300px] mt-10' width={500} height={500} />
                 </div>
-                <div className="w-full flex justify-center items-center">
-                    <Toaster />
+                <div className="w-full flex justify-center items-center relative">
+                    <div className="w-full h-full absolute top-0 left-0 flex justify-center items-center -z-10">
+                        <Image src={'/logo.png'} alt="watermark" width={500} height={500} className="w-[500px] opacity-5" />
+                    </div>
                     <div className='w-[90%] md:w-[80%] rounded-md mx-auto px-5 py-5'>
                         <div className="flex justify-center my-7">
                             <MdSupervisorAccount className="text-[150px] text-zinc-800" />

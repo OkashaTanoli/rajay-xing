@@ -63,28 +63,28 @@ function TokenData() {
                 <Table className='table-auto border w-[1200px] 2xl:w-full'>
                     {/* <TableCaption>A list of your recent invoices.</TableCaption> */}
                     <TableHeader className='bg-primary'>
-                        <TableRow className='grid grid-cols-12 hover:bg-inherit'>
-                            <TableHead className="text-white col-span-1 flex items-center">Ser/ID</TableHead>
-                            <TableHead className='text-white col-span-1 flex items-center'>Name</TableHead>
-                            <TableHead className='text-white col-span-1 flex items-center'>Phone</TableHead>
-                            <TableHead className="text-white col-span-2 flex items-center">CNIC</TableHead>
-                            <TableHead className="text-white col-span-1 flex items-center">Veh No.</TableHead>
-                            <TableHead className="text-white col-span-2 flex items-center">Time of Token Issue</TableHead>
-                            <TableHead className="text-white col-span-1 flex items-center">Driver Details</TableHead>
-                            <TableHead className="text-white col-span-1 flex items-center">Date</TableHead>
-                            <TableHead className="text-white col-span-2 flex items-center">Action</TableHead>
+                        <TableRow className='grid grid-cols-[repeat(13,minmax(0,1fr))] hover:bg-inherit'>
+                            <TableHead className="text-white h-auto col-span-1 flex items-center">Ser/ID</TableHead>
+                            <TableHead className='text-white h-auto col-span-1 flex items-center'>Name / نام</TableHead>
+                            <TableHead className='text-white h-auto col-span-1 flex items-center'>Phone</TableHead>
+                            <TableHead className="text-white h-auto col-span-2 flex items-center">CNIC / شناختی کارڈ</TableHead>
+                            <TableHead className="text-white h-auto col-span-1 flex items-center">Veh No / گاڑی کا نمبر</TableHead>
+                            <TableHead className="text-white h-auto col-span-2 flex items-center">Time of Token Issue / ٹوکن ایشو کا وقت</TableHead>
+                            <TableHead className="text-white h-auto col-span-2 flex items-center">Driver Details / ڈرائیور کی تفصیلات</TableHead>
+                            <TableHead className="text-white h-auto col-span-1 flex items-center">Date / تاریخ</TableHead>
+                            <TableHead className="text-white h-auto col-span-2 flex items-center">Action / عمل</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
                         {tableData.map((row, index) => (
-                            <TableRow key={index} className='grid grid-cols-12'>
+                            <TableRow key={index} className='grid grid-cols-[repeat(13,minmax(0,1fr))]'>
                                 <TableCell className="col-span-1">{row.serID}</TableCell>
                                 <TableCell className='col-span-1'>{row.name}</TableCell>
                                 <TableCell className='col-span-1'>{row.phone}</TableCell>
                                 <TableCell className="col-span-2">{row.cnic}</TableCell>
                                 <TableCell className="col-span-1">{row.vehicleNumber}</TableCell>
                                 <TableCell className="col-span-2">{row.timeOfTokenIssue}</TableCell>
-                                <TableCell className="col-span-1">{row.driverDetails}</TableCell>
+                                <TableCell className="col-span-2">{row.driverDetails}</TableCell>
                                 <TableCell className="col-span-1">{row.date}</TableCell>
                                 <TableCell className="col-span-2 flex gap-2 items-center">
                                     <button className='py-1 px-2 rounded-md bg-zinc-300'>Edit</button>

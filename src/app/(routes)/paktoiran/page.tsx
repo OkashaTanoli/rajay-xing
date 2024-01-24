@@ -158,7 +158,7 @@ function PakToIran() {
                 <div className='flex gap-2'>
                     <select value={type} onChange={(e) => setType(e.target.value)} className='py-2 px-4 text-sm text-zinc-800 rounded-md border border-zinc-300'>
                         <option value="local">Local</option>
-                        <option value="official">Official</option>
+                        <option value="fuelTrade">Fuel Trade</option>
                     </select>
                     <button className='bg-primary rounded-md py-2 px-4 text-white'>Add New</button>
                 </div>
@@ -166,51 +166,51 @@ function PakToIran() {
             <div className='mt-5 w-full overflow-auto'>
                 {
                     type === 'local' ?
-                        <Table className='table-auto border w-[2000px]'>
+                        <Table className='table-auto border w-[2200px]'>
                             {/* <TableCaption>A list of your recent invoices.</TableCaption> */}
                             <TableHeader className='bg-primary'>
-                                <TableRow className='grid grid-cols-[repeat(24,minmax(0,1fr))] hover:bg-inherit'>
-                                    <TableHead className="pl-2 text-white col-span-1">Ser/ID</TableHead>
-                                    <TableHead className='pl-2 text-white col-span-1'>Name</TableHead>
-                                    <TableHead className="pl-2 text-white col-span-2">CNIC</TableHead>
-                                    <TableHead className="pl-2 text-white col-span-1">Veh Type</TableHead>
-                                    <TableHead className='pl-2 text-white col-span-1'>Time In</TableHead>
-                                    <TableHead className="pl-2 text-white col-span-1">Date In</TableHead>
-                                    <TableHead className='pl-2 text-white col-span-1'>Time Out</TableHead>
-                                    <TableHead className="pl-2 text-white col-span-1">Date Out</TableHead>
-                                    <TableHead className="pl-2 text-white col-span-2">Guest Address</TableHead>
-                                    <TableHead className="pl-2 text-white col-span-2">Guest CNIC</TableHead>
-                                    <TableHead className="pl-2 text-white col-span-1">Guest Name</TableHead>
-                                    <TableHead className='pl-2 text-white col-span-1'>Children Nos</TableHead>
-                                    <TableHead className="pl-2 text-white col-span-2">Family CNIC</TableHead>
-                                    <TableHead className="pl-2 text-white col-span-1">Relation</TableHead>
-                                    <TableHead className="pl-2 text-white col-span-2">Family Member Name</TableHead>
-                                    <TableHead className="pl-2 text-white col-span-1">Address</TableHead>
-                                    <TableHead className="pl-2 text-white col-span-1">Father Name</TableHead>
-                                    <TableHead className="pl-2 text-white col-span-2">Action</TableHead>
+                                <TableRow className=' grid grid-cols-[repeat(34,minmax(0,1fr))] hover:bg-inherit'>
+                                    <TableHead className="pl-2 h-auto text-white col-span-1">Ser/ID</TableHead>
+                                    <TableHead className='pl-2 h-auto text-white col-span-1'>Name / نام</TableHead>
+                                    <TableHead className="pl-2 h-auto text-white col-span-2">Father Name / والد کا نام</TableHead>
+                                    <TableHead className="pl-2 h-auto text-white col-span-2">CNIC / شناختی کارڈ</TableHead>
+                                    <TableHead className="pl-2 h-auto text-white col-span-2">Address / پتہ</TableHead>
+                                    <TableHead className="pl-2 h-auto text-white col-span-2">Veh Type / گاڑی کی قسم</TableHead>
+                                    <TableHead className='pl-2 h-auto text-white col-span-2'>Time In / آنے کا وقت</TableHead>
+                                    <TableHead className="pl-2 h-auto text-white col-span-2">Date In / آنے کی تاریخ</TableHead>
+                                    <TableHead className='pl-2 h-auto text-white col-span-2'>Time Out / جانے کا وقت</TableHead>
+                                    <TableHead className="pl-2 h-auto text-white col-span-2">Date Out / جانے کی تاریخ</TableHead>
+                                    <TableHead className="pl-2 h-auto text-white col-span-2">Guest Name / مہمان کا نام</TableHead>
+                                    <TableHead className="pl-2 h-auto text-white col-span-2">Guest CNIC / شناختی نمبر مہمان کا</TableHead>
+                                    <TableHead className="pl-2 h-auto text-white col-span-2">Guest Address / مہمان کا پتہ</TableHead>
+                                    <TableHead className='pl-2 h-auto text-white col-span-2'>Children Nos / بچوں کی تعداد</TableHead>
+                                    <TableHead className="pl-2 h-auto text-white col-span-2">Family Member Name / ھمرا کا نام</TableHead>
+                                    <TableHead className="pl-2 h-auto text-white col-span-3">Family CNIC / خاندان کا شناختی کارڈ</TableHead>
+                                    <TableHead className="pl-2 h-auto text-white col-span-1">Relation / ر شتہ</TableHead>
+                                    <TableHead className="pl-2 h-auto text-white col-span-2">Action / عمل</TableHead>
                                 </TableRow>
 
                             </TableHeader>
                             <TableBody>
                                 {localResidentData.map((row, index) => (
-                                    <TableRow key={index} className='grid grid-cols-[repeat(24,minmax(0,1fr))] hover:bg-inherit'>
+                                    <TableRow key={index} className='grid grid-cols-[repeat(34,minmax(0,1fr))] hover:bg-inherit'>
                                         <TableCell className="pl-2 col-span-1">{row.serNo}</TableCell>
                                         <TableCell className='pl-2 col-span-1'>{row.name}</TableCell>
+                                        <TableCell className="pl-2 col-span-2">{row.fatherName}</TableCell>
                                         <TableCell className="pl-2 col-span-2">{row.cnic}</TableCell>
-                                        <TableCell className="pl-2 col-span-1">{row.vehsType}</TableCell>
-                                        <TableCell className='pl-2 col-span-1'>{row.timeIn}</TableCell>
-                                        <TableCell className="pl-2 col-span-1">{row.dateIn}</TableCell>
-                                        <TableCell className='pl-2 col-span-1'>{row.timeOut}</TableCell>
-                                        <TableCell className="pl-2 col-span-1">{row.dateOut}</TableCell>
-                                        <TableCell className="pl-2 col-span-2">{row.addressOfGuest}</TableCell>
+                                        <TableCell className="pl-2 col-span-2">{row.address}</TableCell>
+                                        <TableCell className="pl-2 col-span-2">{row.vehsType}</TableCell>
+                                        <TableCell className='pl-2 col-span-2'>{row.timeIn}</TableCell>
+                                        <TableCell className="pl-2 col-span-2">{row.dateIn}</TableCell>
+                                        <TableCell className='pl-2 col-span-2'>{row.timeOut}</TableCell>
+                                        <TableCell className="pl-2 col-span-2">{row.dateOut}</TableCell>
+                                        <TableCell className="pl-2 col-span-2">{row.guestName}</TableCell>
                                         <TableCell className="pl-2 col-span-2">{row.cnicOfGuest}</TableCell>
-                                        <TableCell className="pl-2 col-span-1">{row.guestName}</TableCell>
-                                        <TableCell className='pl-2 col-span-1'>{row.childrenNos}</TableCell>
-                                        <TableCell className="pl-2 col-span-2">{row.cnicOfFamilyMembers}</TableCell>
-                                        <TableCell className="pl-2 col-span-1">{row.relation}</TableCell>
+                                        <TableCell className="pl-2 col-span-2">{row.addressOfGuest}</TableCell>
+                                        <TableCell className='pl-2 col-span-2'>{row.childrenNos}</TableCell>
                                         <TableCell className="pl-2 col-span-2">{row.accompanyingFamilyMembersName}</TableCell>
-                                        <TableCell className="pl-2 col-span-1">{row.address}</TableCell>
-                                        <TableCell className="pl-2 col-span-1">{row.fatherName}</TableCell>
+                                        <TableCell className="pl-2 col-span-3">{row.cnicOfFamilyMembers}</TableCell>
+                                        <TableCell className="pl-2 col-span-1">{row.relation}</TableCell>
                                         <TableCell className="pl-2 col-span-2 flex gap-2 items-center">
                                             <button className='py-1 px-2 rounded-md bg-zinc-300'>Edit</button>
                                             <button className='py-1 px-2 rounded-md bg-red-400'>Delete</button>
@@ -224,21 +224,21 @@ function PakToIran() {
                         <Table className='table-auto border w-[2000px]'>
                             <TableHeader className='bg-primary'>
                                 <TableRow className='grid grid-cols-[repeat(18,minmax(0,1fr))] hover:bg-inherit'>
-                                    <TableHead className="pl-2 text-white col-span-1">Ser No</TableHead>
-                                    <TableHead className='pl-2 text-white col-span-1'>Name</TableHead>
-                                    <TableHead className="pl-2 text-white col-span-1">Father Name</TableHead>
-                                    <TableHead className="pl-2 text-white col-span-2">CNIC</TableHead>
-                                    <TableHead className='pl-2 text-white col-span-1'>Driver Name</TableHead>
-                                    <TableHead className="pl-2 text-white col-span-1">Second Seater</TableHead>
-                                    <TableHead className='pl-2 text-white col-span-2'>Address</TableHead>
-                                    <TableHead className="pl-2 text-white col-span-1">Chassis Number</TableHead>
-                                    <TableHead className="pl-2 text-white col-span-1">Engine Number</TableHead>
-                                    <TableHead className="pl-2 text-white col-span-1">Date Out</TableHead>
-                                    <TableHead className='pl-2 text-white col-span-1'>Time Out</TableHead>
-                                    <TableHead className="pl-2 text-white col-span-1">Date In</TableHead>
-                                    <TableHead className='pl-2 text-white col-span-1'>Time In</TableHead>
-                                    <TableHead className="pl-2 text-white col-span-1">Regn No</TableHead>
-                                    <TableHead className="pl-2 text-white col-span-2">Action</TableHead>
+                                    <TableHead className="pl-2 h-auto text-white col-span-1">Ser No</TableHead>
+                                    <TableHead className='pl-2 h-auto text-white col-span-1'>Name / نام</TableHead>
+                                    <TableHead className="pl-2 h-auto text-white col-span-1">Father Name / والد کا نام</TableHead>
+                                    <TableHead className="pl-2 h-auto text-white col-span-2">CNIC / شناختی کارڈ</TableHead>
+                                    <TableHead className='pl-2 h-auto text-white col-span-2'>Address / پتہ</TableHead>
+                                    <TableHead className='pl-2 h-auto text-white col-span-1'>Driver Name / گاڈی چلانے والے کا نام</TableHead>
+                                    <TableHead className="pl-2 h-auto text-white col-span-1">Second Seater / دوسری ثیٹر</TableHead>
+                                    <TableHead className="pl-2 h-auto text-white col-span-1">Chassis Number / باڈی نمبر</TableHead>
+                                    <TableHead className="pl-2 h-auto text-white col-span-1">Engine Number / انجن نامبر</TableHead>
+                                    <TableHead className="pl-2 h-auto text-white col-span-1">Date Out / جانے کی تاریخ</TableHead>
+                                    <TableHead className='pl-2 h-auto text-white col-span-1'>Time Out / جانے کا وقت</TableHead>
+                                    <TableHead className="pl-2 h-auto text-white col-span-1">Date In / آنے کی تاریخ</TableHead>
+                                    <TableHead className='pl-2 h-auto text-white col-span-1'>Time In / آنے کا وقت</TableHead>
+                                    <TableHead className="pl-2 h-auto text-white col-span-1">Regn No / درج نمبر</TableHead>
+                                    <TableHead className="pl-2 h-auto text-white col-span-2">Action / عمل</TableHead>
                                 </TableRow>
 
                             </TableHeader>
@@ -249,9 +249,9 @@ function PakToIran() {
                                         <TableCell className='pl-2 col-span-1'>{row.name}</TableCell>
                                         <TableCell className="pl-2 col-span-1">{row.fatherName}</TableCell>
                                         <TableCell className="pl-2 col-span-2">{row.cnic}</TableCell>
+                                        <TableCell className='pl-2 col-span-2'>{row.address}</TableCell>
                                         <TableCell className='pl-2 col-span-1'>{row.driverName}</TableCell>
                                         <TableCell className="pl-2 col-span-1">{row.secondSeater}</TableCell>
-                                        <TableCell className='pl-2 col-span-2'>{row.address}</TableCell>
                                         <TableCell className="pl-2 col-span-1">{row.chassisNumber}</TableCell>
                                         <TableCell className="pl-2 col-span-1">{row.engineNumber}</TableCell>
                                         <TableCell className="pl-2 col-span-1">{row.dateOut}</TableCell>

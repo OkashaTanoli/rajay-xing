@@ -28,9 +28,15 @@ const Page = () => {
                     </div>
                     :
                     <div className="flex flex-col items-start gap-5">
-                        <div className="">
-                            <h1 className="text-zinc-700 font-semibold">Select Date</h1>
-                            <input type="date" className="w-[300px] border py-3 px-5 border-zinc-300 rounded-md" />
+                        <div className="flex flex-col md:flex-row gap-5">
+                            <div className="">
+                                <h1 className="text-zinc-700 font-semibold">From Date</h1>
+                                <input type="date" className="w-[300px] border py-3 px-5 border-zinc-300 rounded-md" />
+                            </div>
+                            <div className="">
+                                <h1 className="text-zinc-700 font-semibold">To Date</h1>
+                                <input type="date" className="w-[300px] border py-3 px-5 border-zinc-300 rounded-md" />
+                            </div>
                         </div>
                         <button className="py-4 px-10 bg-primary text-white font-semibold rounded-md">Submit</button>
                     </div>
