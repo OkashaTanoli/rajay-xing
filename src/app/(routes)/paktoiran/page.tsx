@@ -52,6 +52,19 @@ function PakToIran() {
     const [openWebcam, setOpenWebcam] = useState(false)
     const [image, setImage] = useState('')
 
+    const [videoDevices, setVideoDevices] = useState<any>([]);
+    const [selectedDevice, setSelectedDevice] = useState<any>({});
+    useEffect(() => {
+        navigator.mediaDevices.enumerateDevices()
+            .then(devices => {
+                const videoInputs = devices.filter(device => device.kind === 'videoinput');
+                setVideoDevices(videoInputs);
+                if (videoInputs.length > 0) {
+                    setSelectedDevice(videoInputs[0]);
+                }
+            });
+    }, []);
+
     const webcamRef: any = useRef(null);
     const capture = useCallback(() => {
         const imageSrc = webcamRef.current.getScreenshot();
@@ -60,6 +73,18 @@ function PakToIran() {
         console.log(imageSrc);
 
     }, [webcamRef]);
+
+    const handleDeviceChange = (event: any) => {
+        const selectedDeviceId = event.target.value;
+        const device = videoDevices.find((device: any) => device.deviceId === selectedDeviceId);
+        setSelectedDevice(device);
+    };
+
+    const videoConstraints = {
+        width: 1280,
+        height: 720,
+        deviceId: selectedDevice ? { exact: selectedDevice.deviceId } : undefined
+    };
 
 
     // const printRef: any = useRef();
@@ -244,7 +269,7 @@ function PakToIran() {
             <div className='flex justify-between items-center mt-3'>
                 <h1 className='text-base sm:text-xl text-red-500'>Crossed Vehs : 120</h1>
                 <div className='flex gap-2'>
-                    <select value={type!} onChange={(e) => changeType(e.target.value)} className='py-2 px-4 text-sm text-zinc-800 rounded-md border-2 border-zinc-500'>
+                    <select value={type!} onChange={(e) => changeType(e.target.value)} className='py-2 px-4 text-sm text-zinc-800 rounded-md border-2 shadow-[0_0_15px_rgba(0,0,0,0.3)] border-zinc-500'>
                         <option value="local">Local</option>
                         <option value="fuelTrade">Fuel Trade</option>
                     </select>
@@ -311,7 +336,7 @@ function PakToIran() {
                                                 <TableCell className="pl-2 col-span-1">{row.relation}</TableCell>
                                                 <TableCell className="pl-2 col-span-3 flex flex-wrap gap-2 items-center">
                                                     {
-                                                        state.userDetails.role === 'super-admin' &&
+                                                        state.userDetails?.role === 'super-admin' &&
                                                         <>
                                                             <button onClick={() => {
                                                                 setCurrentEntry(row)
@@ -321,7 +346,7 @@ function PakToIran() {
                                                         </>
                                                     }
                                                     {
-                                                        state.userDetails.role !== 'admin' &&
+                                                        state.userDetails?.role !== 'admin' &&
                                                         <button onClick={() => {
                                                             setOpenPrintToken(true)
                                                             setCurrentEntry(row)
@@ -374,7 +399,7 @@ function PakToIran() {
                                                 <TableCell className="pl-2 col-span-1">{row.regnNo}</TableCell>
                                                 <TableCell className="pl-2 col-span-2 flex flex-wrap gap-2 items-center">
                                                     {
-                                                        state.userDetails.role === 'super-admin' &&
+                                                        state.userDetails?.role === 'super-admin' &&
                                                         <>
                                                             <button onClick={() => {
                                                                 setCurrentEntry(row)
@@ -384,7 +409,7 @@ function PakToIran() {
                                                         </>
                                                     }
                                                     {
-                                                        state.userDetails.role !== 'admin' &&
+                                                        state.userDetails?.role !== 'admin' &&
                                                         <button onClick={() => {
                                                             setOpenPrintToken(true)
                                                             setCurrentEntry(row)
@@ -415,7 +440,7 @@ function PakToIran() {
             {
                 openPrintToken && currentEntry &&
                 <Dialog open={openPrintToken} onOpenChange={setOpenPrintToken}>
-                    <DialogContent>
+                    <DialogContent className='max-w-[500px] print:max-w-[300px] max-h-screen !overflow-auto'>
                         <X onClick={() => {
                             setCurrentEntry(null)
                             setOpenWebcam(false)
@@ -425,42 +450,51 @@ function PakToIran() {
                         <DialogHeader>
                             <DialogTitle className='text-xl font-bold text-zinc-800 print:hidden'>Print Token</DialogTitle>
                             <DialogDescription>
-                                <div className='mt-10'>
+                                <div className='mt-5 print:mt-1'>
                                     {
                                         openWebcam ?
                                             <div>
-                                                <Webcam height={600} width={600} ref={webcamRef} />
+                                                <Webcam height={600} width={600} ref={webcamRef} videoConstraints={videoConstraints} />
+                                                <select onChange={handleDeviceChange}>
+                                                    {videoDevices.map((device: any) => (
+                                                        <option key={device.deviceId} value={device.deviceId}>{device.label}</option>
+                                                    ))}
+                                                </select>
                                                 <button onClick={capture} className='text-white mt-5 bg-primary py-3 px-5 rounded-md'>Capture photo</button>
                                             </div>
                                             :
 
-                                            <div className='mt-10 flex flex-col gap-5'>
-                                                <div className='flex justify-between items-start'>
-
+                                            <div className='mt-5 print:mt-1 flex flex-col gap-5'>
+                                                <div className='flex flex-col items-center'>
+                                                    <div className='w-full hidden print:flex mb-8 justify-between items-center'>
+                                                        <Image src={'/logo.png'} alt='logo' className='w-[50px]' width={50} height={50} />
+                                                        <h1 className='text-base font-bold text-zinc-800'>RAJAY CROSSING</h1>
+                                                    </div>
                                                     <div className=''>
                                                         {
                                                             image ?
-                                                                <>
+                                                                <div className='flex flex-col items-center'>
                                                                     <Image src={image} alt='image' className='h-full object-cover' width={200} height={200} />
                                                                     <button onClick={() => {
                                                                         setOpenWebcam(true)
                                                                         setImage('')
                                                                     }} className='text-white bg-primary py-3 px-5 rounded-md mt-2 print:hidden'>Re-take Picture</button>
-                                                                </>
+                                                                </div>
                                                                 :
                                                                 <div className=''>
-                                                                    <button onClick={() => setOpenWebcam(true)} className='text-white bg-primary py-3 px-5 rounded-md'>Take Picture</button>
+                                                                    <button onClick={() => setOpenWebcam(true)} className='text-white bg-primary py-3 px-5 rounded-md print:hidden'>Take Picture</button>
                                                                 </div>
                                                         }
                                                     </div>
-                                                    <div>
-                                                        <QRCodeSVG size={150} value={`/irantopak?type=${currentEntry?.type}&search=${currentEntry._id}`} />
+                                                    <div className='mt-3'>
+                                                        <QRCodeSVG size={150} value={`https://rajay-xing.vercel.app/irantopak?type=${currentEntry?.type}&search=${currentEntry._id}`} />
                                                     </div>
                                                 </div>
-                                                <div className='text-lg flex flex-col gap-2 font-bold text-zinc-800'>
+                                                <div className='text-base flex flex-col gap-2 font-bold text-zinc-800'>
                                                     <p><span className='text-primary'>Name:</span> {currentEntry?.name}</p>
                                                     <p><span className='text-primary'>CNIC:</span> {currentEntry?.cnic}</p>
                                                     <p><span className='text-primary'>Driver Name:</span> {currentEntry?.driverName ?? '-'}</p>
+                                                    <p><span className='text-primary'>Issued By:</span> {state.userDetails?.name ?? '-'}</p>
                                                 </div>
                                             </div>
                                     }

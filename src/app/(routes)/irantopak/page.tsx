@@ -183,7 +183,7 @@ function IranToPak() {
             <div className='flex justify-between items-center mt-3'>
                 <h1 className='text-base sm:text-xl text-red-500'>Crossed Vehs : 120</h1>
                 <div className='flex gap-2'>
-                    <select value={type!} onChange={(e) => changeType(e.target.value)} className='py-2 px-4 text-sm text-zinc-800 rounded-md border-2 border-zinc-500'>
+                    <select value={type!} onChange={(e) => changeType(e.target.value)} className='py-2 px-4 text-sm text-zinc-800 shadow-[0_0_15px_rgba(0,0,0,0.3)] rounded-md border-2 border-zinc-500'>
                         <option value="local">Local</option>
                         <option value="fuelTrade">Fuel Trade</option>
                     </select>

@@ -1,5 +1,6 @@
 import { connect } from '@/db';
 import Entry from '@/models/entry.model';
+import { CustomError } from '@/utils/customError';
 import { NextRequest, NextResponse } from 'next/server'
 
 
@@ -53,7 +54,7 @@ export async function PATCH(request: NextRequest, params: { params: { id: string
             }
         }
         console.log(data);
-        
+
         let entry = await Entry.findOneAndUpdate({ _id: params.params.id }, { ...data })
         return NextResponse.json({ status: 'success', message: 'Entry updated successfully', entry }, { status: 200 })
     }

@@ -9,6 +9,14 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog"
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { Loader } from '@/components/common';
@@ -16,6 +24,9 @@ import { Toaster, toast } from 'react-hot-toast';
 import dayjs from 'dayjs';
 import EditForm from '@/components/tokendata/editFrom';
 import { ContextApi } from '@/context/context';
+import Image from 'next/image';
+import { QRCodeSVG } from 'qrcode.react';
+import { X } from 'lucide-react';
 
 function TokenData() {
 
@@ -30,6 +41,9 @@ function TokenData() {
     const [deleteTokenId, setDeleteTokenId] = useState('')
     const [currentEntry, setCurrentEntry] = useState<any>()
     const [openEdit, setOpenEdit] = useState(false)
+    const [currentTokenToPrint, setCurrentTokenToPrint] = useState<any>()
+    const [openPrintToken, setOpenPrintToken] = useState(false)
+
 
     async function fetchData() {
         setLoading(true)
@@ -154,17 +168,23 @@ function TokenData() {
                                             <TableCell className="col-span-2">{row.createdAt ? dayjs(row.createdAt).format('DD-MM-YYYY') : '-'}</TableCell>
                                             <TableCell className="col-span-2">{row.createdAt ? dayjs(row.createdAt).format('H:mm A') : '-'}</TableCell>
                                             <TableCell className="col-span-3">{row?.driverName ? row?.driverName : '-'}</TableCell>
-                                            <TableCell className="col-span-2 flex gap-2 items-center">
+                                            <TableCell className="col-span-2 flex flex-wrap gap-2 items-center">
                                                 {
-                                                    state.userDetails.role === 'super-admin' ?
-                                                        <>
-                                                            <button onClick={() => {
-                                                                setCurrentEntry(row)
-                                                                setOpenEdit(true)
-                                                            }} className='py-1 px-2 rounded-md bg-zinc-300'>Edit</button>
-                                                            <button disabled={!!deleteTokenId} onClick={() => deleteEntry(row._id)} className='py-1 px-2 rounded-md bg-red-400'>{deleteTokenId === row._id ? <Loader height='h-4' width='w-4' /> : 'Delete'} </button>
-                                                        </>
-                                                        : '-'
+                                                    state.userDetails?.role === 'super-admin' &&
+                                                    <>
+                                                        <button onClick={() => {
+                                                            setCurrentEntry(row)
+                                                            setOpenEdit(true)
+                                                        }} className='py-1 px-2 rounded-md bg-zinc-300'>Edit</button>
+                                                        <button disabled={!!deleteTokenId} onClick={() => deleteEntry(row._id)} className='py-1 px-2 rounded-md bg-red-400'>{deleteTokenId === row._id ? <Loader height='h-4' width='w-4' /> : 'Delete'} </button>
+                                                    </>
+                                                }
+                                                {
+                                                    state.userDetails?.role !== 'admin' &&
+                                                    <button onClick={() => {
+                                                        setCurrentTokenToPrint(row)
+                                                        setOpenPrintToken(true)
+                                                    }} className='py-1 px-2 rounded-md bg-blue-400'>Print</button>
                                                 }
                                             </TableCell>
                                         </TableRow>
@@ -184,6 +204,53 @@ function TokenData() {
                     fetchData={fetchData}
                 />
             }
+
+
+            {
+                currentTokenToPrint && openPrintToken &&
+                <Dialog open={openPrintToken} onOpenChange={setOpenPrintToken}>
+                    <DialogContent className='max-w-[500px] print:max-w-[300px] max-h-screen !overflow-auto'>
+                        <X onClick={() => {
+                            setCurrentEntry(null)
+                            setOpenPrintToken(false)
+                        }} className="absolute cursor-pointer print:hidden top-3 right-3 h-4 w-4" />
+                        <DialogHeader>
+                            <DialogTitle className='text-xl font-bold text-zinc-800 print:hidden'>Print Token</DialogTitle>
+                            <DialogDescription>
+                                <div className='mt-5 print:mt-1'>
+                                    <div className='mt-5 print:mt-1 flex flex-col gap-5'>
+                                        <div className='flex flex-col items-center'>
+                                            <div className='w-full hidden print:flex mb-8 justify-between items-center'>
+                                                <Image src={'/logo.png'} alt='logo' className='w-[50px]' width={50} height={50} />
+                                                <h1 className='text-base font-bold text-zinc-800'>RAJAY CROSSING</h1>
+                                            </div>
+                                            <div className=''>
+                                                <div className='flex flex-col items-center'>
+                                                    <Image src={currentTokenToPrint?.image} alt='image' className='h-full object-cover' width={200} height={200} />
+                                                </div>
+                                            </div>
+                                            <div className='mt-3'>
+                                                <QRCodeSVG size={150} value={`https://rajay-xing.vercel.app/irantopak?type=${currentTokenToPrint?.entry?.type}&search=${currentTokenToPrint?.entry?._id}`} />
+                                            </div>
+                                        </div>
+                                        <div className='text-base flex flex-col gap-2 font-bold text-zinc-800'>
+                                            <p><span className='text-primary'>Name:</span> {currentTokenToPrint?.name}</p>
+                                            <p><span className='text-primary'>CNIC:</span> {currentTokenToPrint?.cnic}</p>
+                                            <p><span className='text-primary'>Driver Name:</span> {currentTokenToPrint?.driverName ? currentTokenToPrint?.driverName : '-'}</p>
+                                            <p><span className='text-primary'>Issued By:</span> {currentTokenToPrint?.createdBy?.name ?? '-'}</p>
+                                        </div>
+                                    </div>
+                                    <div className='flex justify-end pt-5 border-t mt-5 print:hidden'>
+                                        <button onClick={() => window.print()} className='w-[120px] py-3 font-semibold bg-primary text-white rounded-md'>Print</button>
+                                    </div>
+                                </div>
+                            </DialogDescription>
+                        </DialogHeader>
+                    </DialogContent>
+                </Dialog>
+            }
+
+
         </div>
     );
 }

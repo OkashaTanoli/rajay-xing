@@ -7,6 +7,10 @@ import mongoose from "mongoose";
 
 export async function POST(request: NextRequest) {
     try {
+        let user_details = JSON.parse(request.headers.get('verifiedJwt') as string)
+        if (user_details.role !== 'super-admin') {
+            throw new CustomError('You are not authorized to perform this action', 401)
+        }
         await connect()
         let body: IFormSchema = await request.json()
         let details = JSON.parse(request.headers.get('verifiedJwt') as string)

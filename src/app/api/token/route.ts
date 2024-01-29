@@ -55,8 +55,14 @@ export async function GET(request: NextRequest) {
         if (mongoose.isValidObjectId(request.nextUrl.searchParams.get('search')!)) {
             query.$or.push({ _id: new mongoose.Types.ObjectId(request.nextUrl.searchParams.get('search')!) });
         }
-        let entries = await Token.find(query);
-        return NextResponse.json({ status: 'success', data: entries }, { status: 200 })
+        let tokens = await Token.find(query).populate({
+            path: 'createdBy',
+            select: 'name' // Select only the 'name' field
+        }).populate({
+            path: 'entry',
+            select: 'type' // Select only the 'name' field
+        });
+        return NextResponse.json({ status: 'success', data: tokens }, { status: 200 })
     }
     catch (err: any) {
         return NextResponse.json({ message: err.message, status: 'error' }, { status: err.statusCode ? err.statusCode : 500 })

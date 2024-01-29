@@ -3,13 +3,16 @@
 import { ImStatsBars } from "react-icons/im";
 import { SiMicrosoftexcel } from "react-icons/si";
 import { MdOutlineCompareArrows } from "react-icons/md";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { BarChart, Loader } from "@/components/common";
 import readXlsxFile from 'read-excel-file'
 import { Toaster, toast } from 'react-hot-toast';
+import { ContextApi } from "@/context/context";
 
 
 const Page = () => {
+  const { state, dispatch, Logout } = useContext(ContextApi)
+
   let [active, setActive] = useState(0)
   let [type, setType] = useState('')
   const [fetchedData, setFetchedData] = useState<any>([])
@@ -20,10 +23,16 @@ const Page = () => {
 
   let data = [
     { id: 'stats', title: 'DAILY STATE', icon: <ImStatsBars className="text-[60px] text-zinc-800" /> },
-    { id: 'fuelTrade', title: 'UPLOAD EXCEL NOBAT LIST', icon: <SiMicrosoftexcel className="text-[60px] text-zinc-800" /> },
-    { id: 'local', title: 'UPLOAD EXCEL LOCAL RESIDENTS', icon: <SiMicrosoftexcel className="text-[60px] text-zinc-800" /> },
-    // { title: 'COMPARISON OLD NOBATS', icon: <MdOutlineCompareArrows className="text-[60px] text-zinc-800" /> },
   ]
+
+  if (state.userDetails && state.userDetails.role === 'super-admin') {
+    data = [
+      { id: 'stats', title: 'DAILY STATE', icon: <ImStatsBars className="text-[60px] text-zinc-800" /> },
+      { id: 'fuelTrade', title: 'UPLOAD EXCEL NOBAT LIST', icon: <SiMicrosoftexcel className="text-[60px] text-zinc-800" /> },
+      { id: 'local', title: 'UPLOAD EXCEL LOCAL RESIDENTS', icon: <SiMicrosoftexcel className="text-[60px] text-zinc-800" /> },
+      // { title: 'COMPARISON OLD NOBATS', icon: <MdOutlineCompareArrows className="text-[60px] text-zinc-800" /> },
+    ]
+  }
 
   async function fetchData() {
     setLoading(true)

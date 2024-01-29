@@ -10,6 +10,10 @@ import { CustomError } from "@/utils/customError";
 
 export async function POST(request: NextRequest) {
     try {
+        let details = JSON.parse(request.headers.get('verifiedJwt') as string)        
+        if(details.role !== 'super-admin'){
+            throw new CustomError('You are not authorized to perform this action', 401)
+        }
         await connect()
         const body: ISignUpSchema = await request.json()
         let result = signUpSchema.safeParse(body)

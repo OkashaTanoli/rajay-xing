@@ -35,7 +35,7 @@ export default function RootLayout({
     const { state, dispatch, Logout } = useContext(ContextApi)
 
 
-    const links = [
+    let links = [
         { href: '/', text: 'Home', icon: <TiHome className="text-xl" /> },
         { href: '/tokendata', text: 'Token Data', icon: < MdToken className="text-xl" /> },
         { href: '/paktoiran?type=local', text: 'Pak to Iran', icon: <HiOutlineArrowUpRight className="text-xl" /> },
@@ -43,6 +43,27 @@ export default function RootLayout({
         { href: '/status', text: 'Status', icon: <TbReportSearch className="text-xl" /> },
         { href: '/manualentry', text: 'Manual Entry', icon: <MdFormatListBulletedAdd className="text-xl" /> } // Update href as needed
     ];
+    if (state.userDetails && state.userDetails.role === 'user-out') {
+        links = [
+            { href: '/tokendata', text: 'Token Data', icon: < MdToken className="text-xl" /> },
+            { href: '/paktoiran?type=local', text: 'Pak to Iran', icon: <HiOutlineArrowUpRight className="text-xl" /> },
+        ];
+    }
+    else if (state.userDetails && state.userDetails.role === 'user-in') {
+        links = [
+            { href: '/tokendata', text: 'Token Data', icon: < MdToken className="text-xl" /> },
+            { href: '/irantopak?type=local', text: 'Iran to Pak', icon: <HiOutlineArrowDownLeft className="text-xl" /> },
+        ];
+    }
+    else if (state.userDetails && state.userDetails.role === 'admin') {
+        links = [
+            { href: '/', text: 'Home', icon: <TiHome className="text-xl" /> },
+            { href: '/tokendata', text: 'Token Data', icon: < MdToken className="text-xl" /> },
+            { href: '/paktoiran?type=local', text: 'Pak to Iran', icon: <HiOutlineArrowUpRight className="text-xl" /> },
+            { href: '/irantopak?type=local', text: 'Iran to Pak', icon: <HiOutlineArrowDownLeft className="text-xl" /> },
+            { href: '/status', text: 'Status', icon: <TbReportSearch className="text-xl" /> },
+        ];
+    }
 
     const isActive = (href: string) => {
         return pathname === href.split('?')[0];
@@ -67,13 +88,24 @@ export default function RootLayout({
                     {/* <h1 className='text-xl font-bold text-white'>RAJAY CROSSING</h1> */}
                 </div>
                 <ul className="mt-7">
-                    {links.map((link, index) => (
-                        <Link href={link.href} key={index}>
-                            <li className={`py-3 px-6 flex gap-3 items-center text-white hover:bg-[#00000025] border-b border-zinc-200 cursor-pointer font-semibold ${isActive(link.href) ? 'bg-[#00000040] hover:bg-[#00000040]' : ''}`}>
-                                {link.icon} {link.text}
-                            </li>
-                        </Link>
-                    ))}
+                    {
+                        state.loading ?
+                            <div className="w-full h-full flex justify-center items-center text-white">
+                                <Loader height="h-4" width="w-4" />
+                            </div>
+                            :
+                            <>
+                                {
+                                    links.map((link, index) => (
+                                        <Link href={link.href} key={index}>
+                                            <li className={`py-3 px-6 flex gap-3 items-center text-white hover:bg-[#00000025] border-b border-zinc-200 cursor-pointer font-semibold ${isActive(link.href) ? 'bg-[#00000040] hover:bg-[#00000040]' : ''}`}>
+                                                {link.icon} {link.text}
+                                            </li>
+                                        </Link>
+                                    ))
+                                }
+                            </>
+                    }
                 </ul>
             </div>
             <div className="custom_width relative h-screen overflow-y-auto">

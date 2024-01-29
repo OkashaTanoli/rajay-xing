@@ -8,7 +8,7 @@ export async function middleware(request: NextRequest) {
     if (request.nextUrl.pathname === '/login' && token) {
         return NextResponse.redirect(new URL("/", request.url));
     }
-    if (!authRoutes.find((val) => val === request.nextUrl.pathname)) {
+    if (request.nextUrl.pathname !== '/' && !authRoutes.find((val) => request.nextUrl.pathname.startsWith(val))) {
         return NextResponse.next()
     }
     if (!token) {
@@ -29,6 +29,15 @@ export async function middleware(request: NextRequest) {
         }
 
         if (payload.role !== 'super-admin' && request.nextUrl.pathname === '/signup') {
+            return NextResponse.redirect(new URL("/", request.url));
+        }
+        if (payload.role === 'user-out' && userOutRestrictedRoutes.find((val) => val === request.nextUrl.pathname)) {
+            return NextResponse.redirect(new URL("/paktoiran", request.url));
+        }
+        if (payload.role === 'user-in' && userInRestrictedRoutes.find((val) => val === request.nextUrl.pathname)) {
+            return NextResponse.redirect(new URL("/irantopak", request.url));
+        }
+        if (payload.role === 'admin' && adminRestrictedRoutes.find((val) => val === request.nextUrl.pathname)) {
             return NextResponse.redirect(new URL("/", request.url));
         }
 
@@ -54,7 +63,7 @@ export async function middleware(request: NextRequest) {
 
 
 const authRoutes = [
-    '/',
+    // '/',
     '/api/whoami',
     '/tokendata',
     '/paktoiran',
@@ -64,9 +73,33 @@ const authRoutes = [
     '/api/entry',
     '/api/entry/bulk',
     '/api/token',
+    '/signup',
+    '/api/signup',
+]
+
+
+const userOutRestrictedRoutes = [
+    '/',
+    '/irantopak',
+    '/status',
+    '/manualentry',
+    '/api/entry/bulk',
     '/signup'
 ]
 
+const userInRestrictedRoutes = [
+    '/',
+    '/paktoiran',
+    '/status',
+    '/manualentry',
+    '/api/entry/bulk',
+    '/signup'
+]
+const adminRestrictedRoutes = [
+    '/manualentry',
+    '/api/entry/bulk',
+    '/signup'
+]
 
 
 export const config = {

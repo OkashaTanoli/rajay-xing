@@ -42,7 +42,7 @@ export const CreateContext = ({ children }: { children: ReactNode }) => {
                 console.log(err.message);
             }
         }
-        if (pathname !== '/login' && pathname !== '/signup') {
+        if (pathname !== '/login') {
             getDetails()
         }
         else {

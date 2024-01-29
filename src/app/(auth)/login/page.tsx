@@ -43,7 +43,15 @@ export default function Login() {
             }
             if (resData.status === 'success') {
                 console.log("resData.role === >>> ", resData.data);
-                router.push('/')
+                if (resData.data.role === 'admin' || resData.data.role === 'super-admin') {
+                    router.push('/')
+                }
+                else if (resData.data.role === 'user-out') {
+                    router.push('/paktoiran')
+                }
+                else if (resData.data.role === 'user-in') {
+                    router.push('/irantopak')
+                }
                 dispatch({ type: 'LOGIN', payload: resData.data })
             }
         }

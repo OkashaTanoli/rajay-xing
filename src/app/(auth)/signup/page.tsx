@@ -90,7 +90,8 @@ function SignUp() {
                             <div>
                                 <select {...register("role")} defaultValue={''} className={`text-sm ${errors.role ? 'border-red-500' : 'border-zinc-300'} border outline-none w-full py-4 px-5 rounded-md`}>
                                     <option value="" disabled>Select Role</option>
-                                    <option value="user">user</option>
+                                    <option value="user-out">user out</option>
+                                    <option value="user-in">user in</option>
                                     <option value="admin">admin</option>
                                     <option value="super-admin">super-admin</option>
                                 </select>
