@@ -27,9 +27,47 @@ function SignUp() {
     const router = useRouter()
 
     async function onSubmit(data: ISignUpSchema) {
-        console.log(data);
-    }
+        try {
+            const response = await fetch('/api/signup', {
+                method: 'POST',
+                headers: {
+                    'Content-type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            })
+            const resData = await response.json()
+            if (resData.status === 'error') {
+                throw new Error(resData.message)
+            }
+            if (resData.status === 'success') {
+                toast.success(`${resData.message}`, {
+                    duration: 2000,
+                    position: window.matchMedia("(min-width: 600px)").matches ? "bottom-right" : "bottom-center",
 
+                    style: {
+                        backgroundColor: '#d9d9d9',
+                        padding: window.matchMedia("(min-width: 600px)").matches ? "20px 30px" : "15px 20px",
+                        fontSize: '14px',
+                        fontWeight: 'bold'
+                    },
+                });
+            }
+            // console.log(resData);
+        }
+        catch (err: any) {
+            toast.error(err.message, {
+                duration: 4000,
+                position: window.matchMedia("(min-width: 600px)").matches ? "bottom-right" : "bottom-center",
+
+                style: {
+                    backgroundColor: '#d9d9d9',
+                    padding: window.matchMedia("(min-width: 600px)").matches ? "20px 30px" : "15px 20px",
+                    fontSize: '14px',
+                    fontWeight: 'bold'
+                },
+            });
+        }
+    }
 
 
     return (
@@ -49,15 +87,26 @@ function SignUp() {
                             <MdSupervisorAccount className="text-[150px] text-zinc-800" />
                         </div>
                         <form onSubmit={handleSubmit(onSubmit)} className='flex flex-col gap-5 mt-7'>
-                            <input {...register("name")} type="text" placeholder='Full name' className={`text-sm ${errors.name && 'border border-red-500'} outline-none w-full py-4 px-5 rounded-md border border-zinc-300`} />
+                            <div>
+                                <select {...register("role")} defaultValue={''} className={`text-sm ${errors.role ? 'border-red-500' : 'border-zinc-300'} border outline-none w-full py-4 px-5 rounded-md`}>
+                                    <option value="" disabled>Select Role</option>
+                                    <option value="user">user</option>
+                                    <option value="admin">admin</option>
+                                    <option value="super-admin">super-admin</option>
+                                </select>
+                            </div>
+                            {
+                                errors.role && <p className='text-sm text-red-500 -mt-4'>{errors.role.message}</p>
+                            }
+                            <input {...register("name")} type="text" placeholder='Full name' className={`text-sm ${errors.name ? 'border-red-500' : 'border-zinc-300'} border outline-none w-full py-4 px-5 rounded-md`} />
                             {
                                 errors.name && <p className='text-sm text-red-500 -mt-4'>{errors.name.message}</p>
                             }
-                            <input {...register("email")} type='email' placeholder='Email address' className={`text-sm ${errors.email && 'border border-red-500'} outline-none w-full py-4 px-5 rounded-md border border-zinc-300`} />
+                            <input {...register("email")} type='email' placeholder='Email address' className={`text-sm ${errors.email ? 'border-red-500' : 'border-zinc-300'} border outline-none w-full py-4 px-5 rounded-md`} />
                             {
                                 errors.email && <p className='text-sm text-red-500 -mt-4'>{errors.email.message}</p>
                             }
-                            <input {...register("password")} type="password" placeholder='Password' className={`text-sm ${errors.password && 'border border-red-500'} outline-none w-full py-4 px-5 rounded-md border border-zinc-300`} />
+                            <input {...register("password")} type="password" placeholder='Password' className={`text-sm ${errors.password ? 'border-red-500' : 'border-zinc-300'} border outline-none w-full py-4 px-5 rounded-md`} />
                             {
                                 errors.password && <p className='text-sm text-red-500 -mt-4'>{errors.password.message}</p>
                             }
@@ -74,8 +123,8 @@ function SignUp() {
                         </form>
 
                     </div>
-                </div>
-            </div>
+                </div >
+            </div >
         </>
     );
 }

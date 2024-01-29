@@ -3,7 +3,8 @@ import { z } from 'zod'
 export const signUpSchema = z.object({
     name: z.string().min(1, "Name is required").max(20, "User name can not be more than 20 letters"),
     email: z.string().min(1, "Email is required").email({ message: "Must be a valid email" }),
-    password: z.string().min(8, "Password must be at least 8 characters")
+    password: z.string().min(8, "Password must be at least 8 characters"),
+    role: z.string().min(1, "Role is required")
 })
 
 export const signInSchema = z.object({
@@ -12,5 +13,45 @@ export const signInSchema = z.object({
 })
 
 
+export const formSchema = z.object({
+    type: z.string().default('local'),
+    name: z.string(),
+    fName: z.string(),
+    cnic: z.string(),
+    address: z.string(),
+    // dateTimeOut: z.string(),
+    // dateTimeIn: z.string(),
+
+    // Fields specific to 'local' type
+    vehsType: z.string().optional(),
+    accompanyingFamilyMembersName: z.string().optional(),
+    cnicOfFamilyMembers: z.string().optional(),
+    relation: z.string().optional(),
+    guestName: z.string().optional(),
+    cnicOfGuest: z.string().optional(),
+    addressOfGuest: z.string().optional(),
+    childrenNos: z.string().optional(),
+
+    // Fields specific to 'fuelTrade' type
+    driverName: z.string().optional(),
+    secondSeater: z.string().optional(),
+    chassisNumber: z.string().optional(),
+    engineNumber: z.string().optional(),
+    regnNo: z.string().optional(),
+});
+
+
+
+export const tokenSchema = z.object({
+    type: z.string(),
+    name: z.string(),
+    driverName: z.string(),
+    cnic: z.string(),
+})
+
+
+
 export type ISignUpSchema = z.infer<typeof signUpSchema>
 export type ISignInSchema = z.infer<typeof signInSchema>
+export type IFormSchema = z.infer<typeof formSchema>
+export type ITokenSchema = z.infer<typeof tokenSchema>

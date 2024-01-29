@@ -1,17 +1,22 @@
 'use client'
 
 import { Loader } from "@/components/common";
+import { ContextApi } from "@/context/context";
 import { ISignInSchema, signInSchema } from "@/utils/zodschema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useContext, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Toaster, toast } from 'react-hot-toast';
 import { MdSupervisorAccount } from "react-icons/md";
 
 export default function Login() {
     const [loading, setLoading] = useState(false)
+    const router = useRouter()
+    const { state, dispatch, Logout } = useContext(ContextApi)
+
 
     const {
         register,
@@ -22,15 +27,47 @@ export default function Login() {
         resolver: zodResolver(signInSchema)
     })
 
-    const onSubmit = (values: ISignInSchema) => {
-        console.log(values)
+    async function onSubmit(data: ISignInSchema) {
+        try {
+            setLoading(true)
+            const response = await fetch('/api/login', {
+                method: 'POST',
+                headers: {
+                    'Content-type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            })
+            const resData = await response.json()
+            if (resData.status === 'error') {
+                throw new Error(resData.message)
+            }
+            if (resData.status === 'success') {
+                console.log("resData.role === >>> ", resData.data);
+                router.push('/')
+                dispatch({ type: 'LOGIN', payload: resData.data })
+            }
+        }
+        catch (err: any) {
+            setLoading(false)
+            toast.error(err.message, {
+                duration: 3000,
+                position: window.matchMedia("(min-width: 600px)").matches ? "bottom-right" : "bottom-center",
+
+                style: {
+                    backgroundColor: '#d9d9d9',
+                    padding: window.matchMedia("(min-width: 600px)").matches ? "20px 30px" : "15px 20px",
+                    fontSize: '14px',
+                    fontWeight: 'bold'
+                },
+            });
+        }
     }
 
     return (
         <>
             {
                 loading &&
-                <div className='absolute top-0 left-0 w-full h-full bg-[rgba(255,255,255,0.4)] backdrop-blur-sm flex justify-center items-center'>
+                <div className='absolute top-0 left-0 z-50 w-full h-full bg-[rgba(255,255,255,0.4)] backdrop-blur-sm flex justify-center items-center'>
                     <Loader height='h-8' width='w-8' />
                 </div>
             }

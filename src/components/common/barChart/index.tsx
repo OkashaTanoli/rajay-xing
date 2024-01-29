@@ -20,21 +20,20 @@ ChartJS.register(
     Legend
 );
 
+type IProps = {
+    data: any,
+    labels: any
+}
+
 // BarChart component
-const BarChart = () => {
+const BarChart = ({ data, labels }: IProps) => {
     // Data for the chart
     const chartData = {
-        labels: [
-            'Token Issued',
-            'Residents Pak to Iran',
-            'Residents Iran to Pak',
-            'Fuel Veh Pak to Iran',
-            'Fuel Veh Iran to Pak'
-        ],
+        labels: labels,
         datasets: [
             {
                 label: 'Counts',
-                data: [123, 82, 53, 93, 150],
+                data: data,
                 backgroundColor: [
                     'rgba(255, 99, 132, 0.6)',
                     'rgba(54, 162, 235, 0.6)',
