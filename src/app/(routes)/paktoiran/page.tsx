@@ -42,6 +42,7 @@ function PakToIran() {
     // const [type, setType] = useState('local')
     const [data, setData] = useState([])
     const [loading, setLoading] = useState(true)
+    const [tokenLengthLoading, setTokenLengthLoading] = useState(true)
     const [tokenLoading, setTokenLoading] = useState(false)
     const [deleteEntryId, setDeleteEntryId] = useState('')
     // const [search, setSearch] = useState('')
@@ -51,6 +52,7 @@ function PakToIran() {
     const [openPrintToken, setOpenPrintToken] = useState(false)
     const [openWebcam, setOpenWebcam] = useState(false)
     const [image, setImage] = useState('')
+    const [tokenLength, setTokenLength] = useState<any>('')
 
     const [videoDevices, setVideoDevices] = useState<any>([]);
     const [selectedDevice, setSelectedDevice] = useState<any>({});
@@ -151,6 +153,37 @@ function PakToIran() {
             fetchData()
         }
     }, [type, search])
+
+    useEffect(() => {
+        async function getTokenLength() {
+            try {
+                setTokenLengthLoading(true)
+                const res = await fetch('/api/token/gettokenlength')
+                const data = await res.json()
+                if (data.status === 'error') {
+                    throw new Error(data.message)
+                }
+                setTokenLength(data.data.token_length)
+            }
+            catch (err: any) {
+                toast.error(err.message, {
+                    duration: 4000,
+                    position: window.matchMedia("(min-width: 600px)").matches ? "bottom-right" : "bottom-center",
+
+                    style: {
+                        backgroundColor: '#d9d9d9',
+                        padding: window.matchMedia("(min-width: 600px)").matches ? "20px 30px" : "15px 20px",
+                        fontSize: '14px',
+                        fontWeight: 'bold'
+                    },
+                });
+            }
+            finally {
+                setTokenLengthLoading(false)
+            }
+        }
+        getTokenLength()
+    }, [])
 
 
     const changeType = (value: string) => {
@@ -440,74 +473,87 @@ function PakToIran() {
             {
                 openPrintToken && currentEntry &&
                 <Dialog open={openPrintToken} onOpenChange={setOpenPrintToken}>
-                    <DialogContent className='max-w-[500px] print:max-w-[300px] max-h-screen !overflow-auto'>
+                    <DialogContent className='max-w-[500px] print:max-w-[270px] max-h-screen print:max-h-[650px] !overflow-auto'>
                         <X onClick={() => {
                             setCurrentEntry(null)
                             setOpenWebcam(false)
                             setImage('')
                             setOpenPrintToken(false)
                         }} className="absolute cursor-pointer print:hidden top-3 right-3 h-4 w-4" />
-                        <DialogHeader>
-                            <DialogTitle className='text-xl font-bold text-zinc-800 print:hidden'>Print Token</DialogTitle>
-                            <DialogDescription>
-                                <div className='mt-5 print:mt-1'>
-                                    {
-                                        openWebcam ?
-                                            <div>
-                                                <Webcam height={600} width={600} ref={webcamRef} videoConstraints={videoConstraints} />
-                                                <select onChange={handleDeviceChange}>
-                                                    {videoDevices.map((device: any) => (
-                                                        <option key={device.deviceId} value={device.deviceId}>{device.label}</option>
-                                                    ))}
-                                                </select>
-                                                <button onClick={capture} className='text-white mt-5 bg-primary py-3 px-5 rounded-md'>Capture photo</button>
-                                            </div>
-                                            :
-
-                                            <div className='mt-5 print:mt-1 flex flex-col gap-5'>
-                                                <div className='flex flex-col items-center'>
-                                                    <div className='w-full hidden print:flex mb-8 justify-between items-center'>
-                                                        <Image src={'/logo.png'} alt='logo' className='w-[50px]' width={50} height={50} />
-                                                        <h1 className='text-base font-bold text-zinc-800'>RAJAY CROSSING</h1>
-                                                    </div>
-                                                    <div className=''>
-                                                        {
-                                                            image ?
-                                                                <div className='flex flex-col items-center'>
-                                                                    <Image src={image} alt='image' className='h-full object-cover' width={200} height={200} />
-                                                                    <button onClick={() => {
-                                                                        setOpenWebcam(true)
-                                                                        setImage('')
-                                                                    }} className='text-white bg-primary py-3 px-5 rounded-md mt-2 print:hidden'>Re-take Picture</button>
-                                                                </div>
-                                                                :
-                                                                <div className=''>
-                                                                    <button onClick={() => setOpenWebcam(true)} className='text-white bg-primary py-3 px-5 rounded-md print:hidden'>Take Picture</button>
-                                                                </div>
-                                                        }
-                                                    </div>
-                                                    <div className='mt-3'>
-                                                        <QRCodeSVG size={150} value={`https://rajay-xing.vercel.app/irantopak?type=${currentEntry?.type}&search=${currentEntry._id}`} />
-                                                    </div>
-                                                </div>
-                                                <div className='text-base flex flex-col gap-2 font-bold text-zinc-800'>
-                                                    <p><span className='text-primary'>Name:</span> {currentEntry?.name}</p>
-                                                    <p><span className='text-primary'>CNIC:</span> {currentEntry?.cnic}</p>
-                                                    <p><span className='text-primary'>Driver Name:</span> {currentEntry?.driverName ?? '-'}</p>
-                                                    <p><span className='text-primary'>Issued By:</span> {state.userDetails?.name ?? '-'}</p>
-                                                </div>
-                                            </div>
-                                    }
-
-                                    {
-                                        image &&
-                                        <div className='flex justify-end pt-5 border-t mt-5 print:hidden'>
-                                            <button onClick={createToken} disabled={tokenLoading} className='w-[120px] py-3 font-semibold bg-primary text-white rounded-md'>{tokenLoading ? <Loader height='h-4' width='w-4' /> : 'Print'}</button>
-                                        </div>
-                                    }
+                        {
+                            tokenLengthLoading ?
+                                <div className='my-10 flex justify-center'>
+                                    Loading Tokens Length ...
                                 </div>
-                            </DialogDescription>
-                        </DialogHeader>
+                                :
+                                !String(tokenLength) ?
+                                    <div className='my-10 flex justify-center'>
+                                        Failed to load token length. try again
+                                    </div>
+                                    :
+                                    <DialogHeader>
+                                        <DialogTitle className='text-xl font-bold text-zinc-800 print:hidden'>Print Token</DialogTitle>
+                                        <DialogDescription>
+                                            <div className='mt-5 print:mt-1'>
+                                                {
+                                                    openWebcam ?
+                                                        <div>
+                                                            <Webcam height={600} width={600} ref={webcamRef} videoConstraints={videoConstraints} />
+                                                            <select onChange={handleDeviceChange}>
+                                                                {videoDevices.map((device: any) => (
+                                                                    <option key={device.deviceId} value={device.deviceId}>{device.label}</option>
+                                                                ))}
+                                                            </select>
+                                                            <button onClick={capture} className='text-white mt-5 bg-primary py-3 px-5 rounded-md'>Capture photo</button>
+                                                        </div>
+                                                        :
+
+                                                        <div className='mt-5 print:mt-1 flex flex-col gap-5'>
+                                                            <div className='flex flex-col items-center'>
+                                                                <div className='w-full hidden print:flex mb-8 justify-between items-center'>
+                                                                    <Image src={'/logo.png'} alt='logo' className='w-[50px]' width={50} height={50} />
+                                                                    <h1 className='text-sm font-bold text-zinc-800'>RAJAY CROSSING</h1>
+                                                                </div>
+                                                                <div className=''>
+                                                                    {
+                                                                        image ?
+                                                                            <div className='flex flex-col items-center'>
+                                                                                <Image src={image} alt='image' className='h-full object-cover' width={200} height={200} />
+                                                                                <button onClick={() => {
+                                                                                    setOpenWebcam(true)
+                                                                                    setImage('')
+                                                                                }} className='text-white bg-primary py-3 px-5 rounded-md mt-2 print:hidden'>Re-take Picture</button>
+                                                                            </div>
+                                                                            :
+                                                                            <div className=''>
+                                                                                <button onClick={() => setOpenWebcam(true)} className='text-white bg-primary py-3 px-5 rounded-md print:hidden'>Take Picture</button>
+                                                                            </div>
+                                                                    }
+                                                                </div>
+                                                                <div className='mt-3'>
+                                                                    <QRCodeSVG size={150} value={`https://rajay-xing.vercel.app/irantopak?type=${currentEntry?.type}&search=${currentEntry._id}`} />
+                                                                </div>
+                                                            </div>
+                                                            <div className='text-base flex flex-col gap-2 font-bold text-zinc-800'>
+                                                                <p><span className='text-primary'>Name:</span> {currentEntry?.name}</p>
+                                                                <p><span className='text-primary'>CNIC:</span> {currentEntry?.cnic}</p>
+                                                                <p><span className='text-primary'>Driver Name:</span> {currentEntry?.driverName ?? '-'}</p>
+                                                                <p><span className='text-primary'>Issued By:</span> {state.userDetails?.name ?? '-'}</p>
+                                                                <p><span className='text-primary'>Token Number:</span> {tokenLength + 1 ?? '-'}</p>
+                                                            </div>
+                                                        </div>
+                                                }
+
+                                                {
+                                                    image &&
+                                                    <div className='flex justify-end pt-5 border-t mt-5 print:hidden'>
+                                                        <button onClick={createToken} disabled={tokenLoading} className='w-[120px] py-3 font-semibold bg-primary text-white rounded-md'>{tokenLoading ? <Loader height='h-4' width='w-4' /> : 'Print'}</button>
+                                                    </div>
+                                                }
+                                            </div>
+                                        </DialogDescription>
+                                    </DialogHeader>
+                        }
                     </DialogContent>
                 </Dialog>
 

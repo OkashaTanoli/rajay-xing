@@ -77,6 +77,7 @@ function ManualEntry() {
                     },
                 });
             }
+            reset()
         }
         catch (err: any) {
             toast.error(err.message, {

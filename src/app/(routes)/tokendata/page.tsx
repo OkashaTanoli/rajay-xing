@@ -182,7 +182,7 @@ function TokenData() {
                                                 {
                                                     state.userDetails?.role !== 'admin' &&
                                                     <button onClick={() => {
-                                                        setCurrentTokenToPrint(row)
+                                                        setCurrentTokenToPrint({ ...row, id: index + 1 })
                                                         setOpenPrintToken(true)
                                                     }} className='py-1 px-2 rounded-md bg-blue-400'>Print</button>
                                                 }
@@ -238,6 +238,7 @@ function TokenData() {
                                             <p><span className='text-primary'>CNIC:</span> {currentTokenToPrint?.cnic}</p>
                                             <p><span className='text-primary'>Driver Name:</span> {currentTokenToPrint?.driverName ? currentTokenToPrint?.driverName : '-'}</p>
                                             <p><span className='text-primary'>Issued By:</span> {currentTokenToPrint?.createdBy?.name ?? '-'}</p>
+                                            <p><span className='text-primary'>Token Number:</span> {currentTokenToPrint.id ?? '-'}</p>
                                         </div>
                                     </div>
                                     <div className='flex justify-end pt-5 border-t mt-5 print:hidden'>
