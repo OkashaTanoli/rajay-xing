@@ -57,15 +57,32 @@ function PakToIran() {
     const [videoDevices, setVideoDevices] = useState<any>([]);
     const [selectedDevice, setSelectedDevice] = useState<any>({});
     useEffect(() => {
-        navigator.mediaDevices.enumerateDevices()
-            .then(devices => {
-                const videoInputs = devices.filter(device => device.kind === 'videoinput');
-                setVideoDevices(videoInputs);
-                if (videoInputs.length > 0) {
-                    setSelectedDevice(videoInputs[0]);
-                }
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then(stream => {
+                navigator.mediaDevices.enumerateDevices()
+                    .then(devices => {
+                        const videoInputs = devices.filter(device => device.kind === 'videoinput');
+                        setVideoDevices(videoInputs);
+                        if (videoInputs.length > 0) {
+                            setSelectedDevice(videoInputs[0]);
+                        }
+                    });
+            })
+            .catch(error => {
+                // Handle the case where the user denies access or no camera is available
             });
     }, []);
+
+    // useEffect(() => {
+    //     navigator.mediaDevices.enumerateDevices()
+    //         .then(devices => {
+    //             const videoInputs = devices.filter(device => device.kind === 'videoinput');
+    //             setVideoDevices(videoInputs);
+    //             if (videoInputs.length > 0) {
+    //                 setSelectedDevice(videoInputs[0]);
+    //             }
+    //         });
+    // }, []);
 
     const webcamRef: any = useRef(null);
     const capture = useCallback(() => {
