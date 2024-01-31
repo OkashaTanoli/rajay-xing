@@ -133,7 +133,7 @@ export async function GET(request: NextRequest) {
             entries = entries.filter((entry) => !entry.dateTimeOut)
         }
         else if (forPage && forPage === 'itp') {
-            entries = entries.filter((entry) => !entry.dateTimeIn)
+            entries = entries.filter((entry) => !entry.dateTimeIn && entry.dateTimeOut)
         }
         return NextResponse.json({ status: 'success', data: entries }, { status: 200 })
     }

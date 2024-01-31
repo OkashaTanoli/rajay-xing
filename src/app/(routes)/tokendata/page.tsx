@@ -131,8 +131,7 @@ function TokenData() {
                 </div>
             </div>
             <div className='flex justify-between items-center mt-3'>
-                <h1 className='text-base sm:text-xl text-zinc-800'>Token Issued : 120</h1>
-                <button className='bg-primary rounded-md py-2 px-4 text-white'>Add New</button>
+                <h1 className='text-base sm:text-xl text-red-500'>Token Issued : {!loading && data.length ? data.length : '-'}</h1>
             </div>
             <div className='mt-5 w-full overflow-auto'>
                 {

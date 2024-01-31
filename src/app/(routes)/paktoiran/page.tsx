@@ -300,13 +300,16 @@ function PakToIran() {
                 </div>
             </div>
             <div className='flex justify-between items-center mt-3'>
-                <h1 className='text-base sm:text-xl text-red-500'>Crossed Vehs : 120</h1>
+                <h1 className='text-base sm:text-xl text-red-500'>Crossed Vehs : {!loading && data.length ? data.length : '-'}</h1>
                 <div className='flex gap-2'>
                     <select value={type!} onChange={(e) => changeType(e.target.value)} className='py-2 px-4 text-sm text-zinc-800 rounded-md border-2 shadow-[0_0_15px_rgba(0,0,0,0.3)] border-zinc-500'>
                         <option value="local">Local</option>
                         <option value="fuelTrade">Fuel Trade</option>
                     </select>
-                    <button className='bg-primary rounded-md py-2 px-4 text-white'>Add New</button>
+                    {
+                        state.userDetails?.role === 'super-admin' &&
+                        <Link href={'/manualentry'}><button className='bg-primary rounded-md py-2 px-4 text-white'>Add New</button></Link>
+                    }
                 </div>
             </div>
             <div className='mt-5 w-full overflow-auto'>
