@@ -5,6 +5,10 @@ import Token from "@/models/token.model";
 
 export async function POST(request: NextRequest) {
     let body = await request.json()
+    let startDate = new Date(body.startDate);
+    let endDate = new Date(body.endDate);
+    // If not considering time or if both dates are the same
+    endDate.setHours(23, 59, 59, 999); // Set to the last moment of the day
     await connect()
     try {
         // let entries = await Entry.find({ type: request.nextUrl.searchParams.get('type'), $text: { $search: request.nextUrl.searchParams.get('search')! } })
@@ -13,8 +17,8 @@ export async function POST(request: NextRequest) {
             let entries = await Entry.find({
                 type: body.type,
                 createdAt: {
-                    $gte: body.startDate,
-                    $lte: body.endDate
+                    $gte: new Date(startDate),
+                    $lte: new Date(endDate)
                 }
             });
 
