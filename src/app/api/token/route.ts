@@ -22,7 +22,8 @@ export async function POST(request: NextRequest) {
             driverName: body.driverName,
             image: body.image,
             createdBy: details.id,
-            entry: body.entryId
+            entry: body.entryId,
+            regnNo: body.regnNo
         }
         let token = await Token.create(data)
         return NextResponse.json({

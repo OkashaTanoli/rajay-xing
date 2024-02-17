@@ -30,7 +30,8 @@ function EditForm({ currentEntry, setCurrentEntry, openEdit, setOpenEdit, fetchD
             type: currentEntry && currentEntry.type,
             name: currentEntry && currentEntry.name,
             cnic: currentEntry && currentEntry.cnic,
-            driverName: currentEntry && currentEntry.driverName
+            driverName: currentEntry && currentEntry.driverName,
+            regnNo:currentEntry && currentEntry.regnNo
         }
     })
 
@@ -112,6 +113,10 @@ function EditForm({ currentEntry, setCurrentEntry, openEdit, setOpenEdit, fetchD
                             <div className='flex flex-col gap-1'>
                                 <label htmlFor="driverName" className='text-sm text-zinc-700 font-semibold'>Driver Name / گاڈی چلانے والے کا نام</label>
                                 <input {...register("driverName")} type="text" id='driverName' className='border border-zinc-300 text-zinc-800 focus:outline-none py-3 px-4 rounded-lg text-base' />
+                            </div>
+                            <div className='flex flex-col gap-1'>
+                                <label htmlFor="regnNo" className='text-sm text-zinc-700 font-semibold'>Regn No / درج نمبر</label>
+                                <input {...register("regnNo")} type="text" id='regnNo' className='border border-zinc-300 text-zinc-800 focus:outline-none py-3 px-4 rounded-lg text-base' />
                             </div>
                         </div>
 

@@ -1,12 +1,12 @@
 import { z } from 'zod'
 
-function camelCaseToWords(str:string) {
+function camelCaseToWords(str: string) {
     return str
-      // Insert a space before all caps
-      .replace(/([A-Z])/g, ' $1')
-      // Make the first character uppercase
-      .replace(/^./, function(str){ return str.toUpperCase(); })
-  }
+        // Insert a space before all caps
+        .replace(/([A-Z])/g, ' $1')
+        // Make the first character uppercase
+        .replace(/^./, function (str) { return str.toUpperCase(); })
+}
 
 export const signUpSchema = z.object({
     name: z.string().min(1, "Name is required").max(20, "User name can not be more than 20 letters"),
@@ -70,39 +70,40 @@ export const formSchema = z.object({
     chassisNumber: z.string().optional(),
     engineNumber: z.string().optional(),
     regnNo: z.string().optional(),
-}).superRefine((data: any, ctx) => {
-    let isValid = true;
+})
+// .superRefine((data: any, ctx) => {
+//     let isValid = true;
 
-    if (data.type === 'local') {
-        // List all fields that are required for 'local' type
-        const requiredFieldsForLocal = ['vehsType', 'accompanyingFamilyMembersName', 'cnicOfFamilyMembers', 'relation', 'guestName', 'cnicOfGuest', 'addressOfGuest', 'childrenNos'];
-        requiredFieldsForLocal.forEach(field => {
-            if (!data[field]) {
-                ctx.addIssue({
-                    code: 'custom',
-                    path: [field],
-                    message: `${camelCaseToWords(field)} is required`,
-                });
-                isValid = false;
-            }
-        });
-    } else if (data.type === 'fuelTrade') {
-        // List all fields that are required for 'fuelTrade' type
-        const requiredFieldsForFuelTrade = ['driverName', 'secondSeater', 'chassisNumber', 'engineNumber', 'regnNo'];
-        requiredFieldsForFuelTrade.forEach(field => {
-            if (!data[field]) {
-                ctx.addIssue({
-                    code: 'custom',
-                    path: [field],
-                    message: `${camelCaseToWords(field)} is required`,
-                });
-                isValid = false;
-            }
-        });
-    }
+//     if (data.type === 'local') {
+//         // List all fields that are required for 'local' type
+//         const requiredFieldsForLocal = ['vehsType', 'accompanyingFamilyMembersName', 'cnicOfFamilyMembers', 'relation', 'guestName', 'cnicOfGuest', 'addressOfGuest', 'childrenNos'];
+//         requiredFieldsForLocal.forEach(field => {
+//             if (!data[field]) {
+//                 ctx.addIssue({
+//                     code: 'custom',
+//                     path: [field],
+//                     message: `${camelCaseToWords(field)} is required`,
+//                 });
+//                 isValid = false;
+//             }
+//         });
+//     } else if (data.type === 'fuelTrade') {
+//         // List all fields that are required for 'fuelTrade' type
+//         const requiredFieldsForFuelTrade = ['driverName', 'secondSeater', 'chassisNumber', 'engineNumber', 'regnNo'];
+//         requiredFieldsForFuelTrade.forEach(field => {
+//             if (!data[field]) {
+//                 ctx.addIssue({
+//                     code: 'custom',
+//                     path: [field],
+//                     message: `${camelCaseToWords(field)} is required`,
+//                 });
+//                 isValid = false;
+//             }
+//         });
+//     }
 
-    return isValid;
-});
+//     return isValid;
+// });
 
 
 export const tokenSchema = z.object({
@@ -110,6 +111,7 @@ export const tokenSchema = z.object({
     name: z.string(),
     driverName: z.string(),
     cnic: z.string(),
+    regnNo: z.string()
 })
 
 

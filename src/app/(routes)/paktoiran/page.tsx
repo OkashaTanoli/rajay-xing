@@ -259,6 +259,7 @@ function PakToIran() {
                 driverName: currentEntry?.driverName ?? '',
                 image: image,
                 cnic: currentEntry?.cnic,
+                regnNo: currentEntry?.regnNo ? currentEntry?.regnNo : ''
             }
             const response = await fetch(`/api/token`, {
                 method: 'POST',
@@ -389,14 +390,17 @@ function PakToIran() {
                                                 <TableCell className="pl-2 col-span-1">{row.relation}</TableCell>
                                                 <TableCell className="pl-2 col-span-3 flex flex-wrap gap-2 items-center">
                                                     {
-                                                        state.userDetails?.role === 'super-admin' &&
+                                                        (state.userDetails?.role === 'super-admin' || state.userDetails?.role === 'user-out') &&
                                                         <>
                                                             <button onClick={() => {
                                                                 setCurrentEntry(row)
                                                                 setOpenEdit(true)
                                                             }} className='py-1 px-2 rounded-md bg-zinc-300'>Edit</button>
-                                                            <button disabled={!!deleteEntryId} onClick={() => deleteEntry(row._id)} className='py-1 px-2 rounded-md bg-red-400'>{deleteEntryId === row._id ? <Loader height='h-4' width='w-4' /> : 'Delete'} </button>
                                                         </>
+                                                    }
+                                                    {
+                                                        state.userDetails?.role === 'super-admin' &&
+                                                        <button disabled={!!deleteEntryId} onClick={() => deleteEntry(row._id)} className='py-1 px-2 rounded-md bg-red-400'>{deleteEntryId === row._id ? <Loader height='h-4' width='w-4' /> : 'Delete'} </button>
                                                     }
                                                     {
                                                         state.userDetails?.role !== 'admin' &&
@@ -452,14 +456,17 @@ function PakToIran() {
                                                 <TableCell className="pl-2 col-span-1">{row.regnNo}</TableCell>
                                                 <TableCell className="pl-2 col-span-2 flex flex-wrap gap-2 items-center">
                                                     {
-                                                        state.userDetails?.role === 'super-admin' &&
+                                                        (state.userDetails?.role === 'super-admin' || state.userDetails?.role === 'user-out') &&
                                                         <>
                                                             <button onClick={() => {
                                                                 setCurrentEntry(row)
                                                                 setOpenEdit(true)
                                                             }} className='py-1 px-2 rounded-md bg-zinc-300'>Edit</button>
-                                                            <button disabled={!!deleteEntryId} onClick={() => deleteEntry(row._id)} className='py-1 px-2 rounded-md bg-red-400'>{deleteEntryId === row._id ? <Loader height='h-4' width='w-4' /> : 'Delete'} </button>
                                                         </>
+                                                    }
+                                                    {
+                                                        state.userDetails?.role === 'super-admin' &&
+                                                        <button disabled={!!deleteEntryId} onClick={() => deleteEntry(row._id)} className='py-1 px-2 rounded-md bg-red-400'>{deleteEntryId === row._id ? <Loader height='h-4' width='w-4' /> : 'Delete'} </button>
                                                     }
                                                     {
                                                         state.userDetails?.role !== 'admin' &&

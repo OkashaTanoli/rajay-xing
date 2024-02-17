@@ -148,25 +148,27 @@ function TokenData() {
                             <Table className='table-auto border w-[1200px] 2xl:w-full'>
                                 {/* <TableCaption>A list of your recent invoices.</TableCaption> */}
                                 <TableHeader className='bg-primary'>
-                                    <TableRow className='grid grid-cols-[repeat(15,minmax(0,1fr))] hover:bg-inherit'>
+                                    <TableRow className='grid grid-cols-[repeat(17,minmax(0,1fr))] hover:bg-inherit'>
                                         <TableHead className="text-white h-auto col-span-1 flex items-center">Ser/ID</TableHead>
                                         <TableHead className='text-white h-auto col-span-2 flex items-center'>Name / نام</TableHead>
                                         <TableHead className="text-white h-auto col-span-3 flex items-center">CNIC / شناختی کارڈ</TableHead>
                                         <TableHead className="text-white h-auto col-span-2 flex items-center">Date of Token Issue / ٹوکن ایشو کا وقت</TableHead>
                                         <TableHead className="text-white h-auto col-span-2 flex items-center">Time of Token Issue / ٹوکن ایشو کا وقت</TableHead>
                                         <TableHead className="text-white h-auto col-span-3 flex items-center">Driver Details / ڈرائیور کی تفصیلات</TableHead>
+                                        <TableHead className="text-white h-auto col-span-2 flex items-center">Regn No / درج نمبر</TableHead>
                                         <TableHead className="text-white h-auto col-span-2 flex items-center">Action / عمل</TableHead>
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
                                     {data.map((row: any, index) => (
-                                        <TableRow key={index} className='grid grid-cols-[repeat(15,minmax(0,1fr))]'>
+                                        <TableRow key={index} className='grid grid-cols-[repeat(17,minmax(0,1fr))]'>
                                             <TableCell className="col-span-1">{index + 1}</TableCell>
                                             <TableCell className='col-span-2'>{row?.name}</TableCell>
                                             <TableCell className="col-span-3">{row?.cnic}</TableCell>
                                             <TableCell className="col-span-2">{row.createdAt ? dayjs(row.createdAt).format('DD-MM-YYYY') : '-'}</TableCell>
                                             <TableCell className="col-span-2">{row.createdAt ? dayjs(row.createdAt).format('H:mm A') : '-'}</TableCell>
                                             <TableCell className="col-span-3">{row?.driverName ? row?.driverName : '-'}</TableCell>
+                                            <TableCell className="col-span-2">{row?.regnNo ? row?.regnNo : '-'}</TableCell>
                                             <TableCell className="col-span-2 flex flex-wrap gap-2 items-center">
                                                 {
                                                     state.userDetails?.role === 'super-admin' &&

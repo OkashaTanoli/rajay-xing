@@ -8,6 +8,7 @@ const tokenSchema = new mongoose.Schema({
     cnic: String,
     driverName: String,
     image: String,
+    regnNo: String,
     createdBy: { type: mongoose.Schema.Types.ObjectId, ref: User, required: true },
     entry: { type: mongoose.Schema.Types.ObjectId, ref: Entry, required: true }
 }, { timestamps: true });
