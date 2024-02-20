@@ -27,14 +27,16 @@ export async function middleware(request: NextRequest) {
             response.cookies.delete("token");
             return response
         }
-
         if (payload.role !== 'super-admin' && request.nextUrl.pathname === '/signup') {
             return NextResponse.redirect(new URL("/", request.url));
         }
-        if (payload.role === 'user-out' && userOutRestrictedRoutes.find((val) => val === request.nextUrl.pathname)) {
+        if ((payload.role === 'user-out-local' || payload.role === 'user-out-fuel-trade') && userOutRestrictedRoutes.find((val) => val === request.nextUrl.pathname)) {
             return NextResponse.redirect(new URL("/paktoiran", request.url));
         }
-        if (payload.role === 'user-in' && userInRestrictedRoutes.find((val) => val === request.nextUrl.pathname)) {
+        if ((payload.role === 'user-in-local' || payload.role === 'user-in-fuel-trade') && userInRestrictedRoutes.find((val) => val === request.nextUrl.pathname)) {
+            return NextResponse.redirect(new URL("/irantopak", request.url));
+        }
+        if (payload.role === 'user-in-out-local' && userInOutLocalRestrictedRoutes.find((val) => val === request.nextUrl.pathname)) {
             return NextResponse.redirect(new URL("/irantopak", request.url));
         }
         if (payload.role === 'admin' && adminRestrictedRoutes.find((val) => val === request.nextUrl.pathname)) {
@@ -90,6 +92,14 @@ const userOutRestrictedRoutes = [
 const userInRestrictedRoutes = [
     '/',
     '/paktoiran',
+    '/status',
+    '/manualentry',
+    '/api/entry/bulk',
+    '/signup'
+]
+
+const userInOutLocalRestrictedRoutes = [
+    '/',
     '/status',
     '/manualentry',
     '/api/entry/bulk',

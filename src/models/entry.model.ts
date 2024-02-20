@@ -25,7 +25,19 @@ const entrySchema = new mongoose.Schema({
     chassisNumber: String,
     engineNumber: String,
     regnNo: String,
+    destination:String,
     createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }
 }, { timestamps: true });
+
+entrySchema.pre('save', function(next) {
+    const offset = new Date().getTimezoneOffset() * 60000; // Convert offset to milliseconds
+    const localISOTime = (offset:any) => new Date(Date.now() - offset).toISOString();
+  
+    if (this.isNew) {
+      this.createdAt = localISOTime(offset) as any;
+    }
+    this.updatedAt = localISOTime(offset) as any;
+    next();
+  });
 
 export default mongoose.models.Entry || mongoose.model('Entry', entrySchema);

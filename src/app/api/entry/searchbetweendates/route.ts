@@ -8,19 +8,40 @@ export async function POST(request: NextRequest) {
     let startDate = new Date(body.startDate);
     let endDate = new Date(body.endDate);
     // If not considering time or if both dates are the same
-    endDate.setHours(23, 59, 59, 999); // Set to the last moment of the day
+    endDate.setUTCHours(23, 59, 59, 999); // Set to the last moment of the day
+
+    // startDate = startDate.toISOString() as any
+    // endDate = endDate.toISOString() as any
     await connect()
+    console.log(startDate, endDate);
+
     try {
         // let entries = await Entry.find({ type: request.nextUrl.searchParams.get('type'), $text: { $search: request.nextUrl.searchParams.get('search')! } })
+        let filteredConditions: any = {
+            type: body.type,
+            createdAt: {
+                $gte: new Date(startDate),
+                $lte: new Date(endDate)
+            }
+        }
+        if (body.cnicOfPerson) {
+            filteredConditions = {
+                ...filteredConditions,
+                cnic: body.cnicOfPerson
+            }
+        }
+        if (body.type === 'fuelTrade' && body.destination) {
+            filteredConditions = {
+                ...filteredConditions,
+                destination: body.destination
+            }
+        }
+        if(body.type === 'token'){
+            delete filteredConditions.type
+        }
         if (body.type !== 'token') {
 
-            let entries = await Entry.find({
-                type: body.type,
-                createdAt: {
-                    $gte: new Date(startDate),
-                    $lte: new Date(endDate)
-                }
-            });
+            let entries = await Entry.find(filteredConditions);
 
             let formattedEntries = entries.map(entry => {
                 // Basic data structure
@@ -55,6 +76,7 @@ export async function POST(request: NextRequest) {
                         chassisNumber: entry.chassisNumber,
                         engineNumber: entry.engineNumber,
                         regnNo: entry.regnNo,
+                        destination: entry.destination
                     };
                 }
 
@@ -66,13 +88,14 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ status: 'success', data: formattedEntries }, { status: 200 })
         }
         else {
-            let tokens = await Token.find()
+            let tokens = await Token.find(filteredConditions)
             let formattedTokens = tokens.map((token) => {
                 return {
                     type: token.type,
                     name: token.name,
                     cnic: token.cnic,
                     driverName: token.driverName,
+                    regNo: token.regnNo
                 }
             })
             return NextResponse.json({ status: 'success', data: formattedTokens }, { status: 200 })

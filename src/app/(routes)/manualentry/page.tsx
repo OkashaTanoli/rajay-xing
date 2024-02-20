@@ -46,6 +46,7 @@ function ManualEntry() {
             chassisNumber: "",
             engineNumber: "",
             regnNo: "",
+            destination: 'dalbandin'
         }
     })
 
@@ -220,6 +221,16 @@ function ManualEntry() {
                                         <label htmlFor="regnNo" className='text-sm text-zinc-700 font-semibold'>Regn No / درج نمبر</label>
                                         <input {...register("regnNo")} type="text" id='regnNo' className='border border-zinc-300 text-zinc-800 focus:outline-none py-3 px-4 rounded-lg text-base' />
                                         {errors.regnNo && <p className='text-red-500 text-sm'>{errors.regnNo.message}</p>}
+                                    </div>
+                                    <div className='flex flex-col gap-1'>
+                                        <label htmlFor="destination" className='text-sm text-zinc-700 font-semibold'>Destination / منزل</label>
+                                        <select id="destination" {...register("destination")} className='border border-zinc-300 text-zinc-800 focus:outline-none py-3 px-4 rounded-lg text-base'>
+                                            <option value="dalbandin">Dalbandin</option>
+                                            <option value="nokhundi">Nokhundi</option>
+                                            <option value="rajay">Rajay</option>
+                                            <option value="talab">Talab</option>
+                                        </select>
+                                        {errors.destination && <p className='text-red-500 text-sm'>{errors.destination.message}</p>}
                                     </div>
                                 </>
 

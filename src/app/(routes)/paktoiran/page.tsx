@@ -56,6 +56,9 @@ function PakToIran() {
 
     const [videoDevices, setVideoDevices] = useState<any>([]);
     const [selectedDevice, setSelectedDevice] = useState<any>({});
+
+    const [inEntry, setInEntry] = useState('')
+
     useEffect(() => {
         navigator.mediaDevices.getUserMedia({ video: true })
             .then(stream => {
@@ -166,10 +169,21 @@ function PakToIran() {
         if (type !== 'local' && type !== 'fuelTrade') {
             router.push(`/paktoiran?type=local`)
         }
-        else {
-            fetchData()
+        if ((state.userDetails && state.userDetails.role === 'user-out-local') && type === 'fuelTrade') {
+            router.push(`/paktoiran?type=local`)
         }
-    }, [type, search])
+        if ((state.userDetails && state.userDetails.role === 'user-out-fuel-trade') && type === 'local') {
+            router.push(`/paktoiran?type=fuelTrade`)
+        }
+        else if (state.userDetails && state.userDetails.role === 'user-in-out-local' && type === 'fuelTrade') {
+            router.push(`/paktoiran?type=local`)
+        }
+        else {
+            if (state.userDetails && ((state.userDetails?.role === 'user-out-local' && type === 'local') || (state.userDetails.role === 'user-out-fuel-trade' && type === 'fuelTrade') || state.userDetails.role === 'super-admin' || state.userDetails.role === 'admin' || (state.userDetails?.role === 'user-in-out-local' && type === 'local') )) {
+                fetchData()
+            }
+        }
+    }, [type, search, state.userDetails])
 
     useEffect(() => {
         async function getTokenLength() {
@@ -307,6 +321,54 @@ function PakToIran() {
 
     }
 
+
+    const addOutEntry = async (row: any) => {
+        try {
+            setInEntry(row._id)
+            const response = await fetch(`/api/entry/${row._id}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-type': 'application/json',
+                },
+                body: JSON.stringify({ ...row, dateTimeOut: new Date(new Date().getTime() - new Date().getTimezoneOffset() * 60000) })
+            })
+            const resData = await response.json()
+            if (resData.status === 'error') {
+                throw new Error(resData.message)
+            }
+            if (resData.status === 'success') {
+                toast.success(`${'User Out successfully'}`, {
+                    duration: 2000,
+                    position: window.matchMedia("(min-width: 600px)").matches ? "bottom-right" : "bottom-center",
+
+                    style: {
+                        backgroundColor: '#d9d9d9',
+                        padding: window.matchMedia("(min-width: 600px)").matches ? "20px 30px" : "15px 20px",
+                        fontSize: '14px',
+                        fontWeight: 'bold'
+                    },
+                });
+                fetchData()
+            }
+        }
+        catch (err: any) {
+            toast.error(err.message, {
+                duration: 4000,
+                position: window.matchMedia("(min-width: 600px)").matches ? "bottom-right" : "bottom-center",
+
+                style: {
+                    backgroundColor: '#d9d9d9',
+                    padding: window.matchMedia("(min-width: 600px)").matches ? "20px 30px" : "15px 20px",
+                    fontSize: '14px',
+                    fontWeight: 'bold'
+                },
+            });
+        }
+        finally {
+            setInEntry('')
+        }
+    }
+
     return (
         <div className='mt-10'>
             <Toaster />
@@ -320,10 +382,13 @@ function PakToIran() {
             <div className='flex justify-between items-center mt-3'>
                 <h1 className='text-base sm:text-xl text-red-500'>Crossed Vehs : {!loading && data.length ? data.length : '-'}</h1>
                 <div className='flex gap-2'>
-                    <select value={type!} onChange={(e) => changeType(e.target.value)} className='py-2 px-4 text-sm text-zinc-800 rounded-md border-2 shadow-[0_0_15px_rgba(0,0,0,0.3)] border-zinc-500'>
-                        <option value="local">Local</option>
-                        <option value="fuelTrade">Fuel Trade</option>
-                    </select>
+                    {
+                        (state.userDetails?.role === 'super-admin' || state.userDetails?.role === 'admin') &&
+                        <select value={type!} onChange={(e) => changeType(e.target.value)} className='py-2 px-4 text-sm text-zinc-800 shadow-[0_0_15px_rgba(0,0,0,0.3)] rounded-md border-2 border-zinc-500'>
+                            <option value="local">Local</option>
+                            <option value="fuelTrade">Fuel Trade</option>
+                        </select>
+                    }
                     {
                         state.userDetails?.role === 'super-admin' &&
                         <Link href={'/manualentry'}><button className='bg-primary rounded-md py-2 px-4 text-white'>Add New</button></Link>
@@ -371,26 +436,26 @@ function PakToIran() {
                                     <TableBody>
                                         {data.map((row: any, index) => (
                                             <TableRow key={index} className='grid grid-cols-[repeat(35,minmax(0,1fr))] hover:bg-inherit'>
-                                                <TableCell className="pl-2 col-span-1">{index + 1}</TableCell>
-                                                <TableCell className='pl-2 col-span-1'>{row.name}</TableCell>
-                                                <TableCell className="pl-2 col-span-2">{row.fName}</TableCell>
-                                                <TableCell className="pl-2 col-span-2">{row.cnic}</TableCell>
-                                                <TableCell className="pl-2 col-span-2">{row.address}</TableCell>
-                                                <TableCell className="pl-2 col-span-2">{row.vehsType}</TableCell>
-                                                <TableCell className="pl-2 col-span-2">{row.dateTimeOut ? dayjs(row.dateTimeOut).format('DD-MM-YYYY') : '-'}</TableCell>
-                                                <TableCell className='pl-2 col-span-2'>{row.dateTimeOut ? dayjs(row.dateTimeOut).format('H:mm A') : '-'}</TableCell>
-                                                <TableCell className="pl-2 col-span-2">{row.dateTimeIn ? dayjs(row.dateTimeIn).format('DD-MM-YYYY') : '-'}</TableCell>
-                                                <TableCell className='pl-2 col-span-2'>{row.dateTimeIn ? dayjs(row.dateTimeIn).format('H:mm A') : '-'}</TableCell>
-                                                <TableCell className="pl-2 col-span-2">{row.guestName}</TableCell>
-                                                <TableCell className="pl-2 col-span-2">{row.cnicOfGuest}</TableCell>
-                                                <TableCell className="pl-2 col-span-2">{row.addressOfGuest}</TableCell>
-                                                <TableCell className='pl-2 col-span-2'>{row.childrenNos}</TableCell>
-                                                <TableCell className="pl-2 col-span-2">{row.accompanyingFamilyMembersName}</TableCell>
-                                                <TableCell className="pl-2 col-span-3">{row.cnicOfFamilyMembers}</TableCell>
-                                                <TableCell className="pl-2 col-span-1">{row.relation}</TableCell>
+                                                <TableCell className="pl-2 col-span-1 break-words">{index + 1}</TableCell>
+                                                <TableCell className='pl-2 col-span-1 break-words'>{row.name}</TableCell>
+                                                <TableCell className="pl-2 col-span-2 break-words">{row.fName}</TableCell>
+                                                <TableCell className="pl-2 col-span-2 break-words">{row.cnic}</TableCell>
+                                                <TableCell className="pl-2 col-span-2 break-words">{row.address}</TableCell>
+                                                <TableCell className="pl-2 col-span-2 break-words">{row.vehsType}</TableCell>
+                                                <TableCell className="pl-2 col-span-2 break-words">{row.dateTimeOut ? dayjs(row.dateTimeOut).format('DD-MM-YYYY') : '-'}</TableCell>
+                                                <TableCell className='pl-2 col-span-2 break-words'>{row.dateTimeOut ? dayjs(row.dateTimeOut).format('H:mm A') : '-'}</TableCell>
+                                                <TableCell className="pl-2 col-span-2 break-words">{row.dateTimeIn ? dayjs(row.dateTimeIn).format('DD-MM-YYYY') : '-'}</TableCell>
+                                                <TableCell className='pl-2 col-span-2 break-words'>{row.dateTimeIn ? dayjs(row.dateTimeIn).format('H:mm A') : '-'}</TableCell>
+                                                <TableCell className="pl-2 col-span-2 break-words">{row.guestName}</TableCell>
+                                                <TableCell className="pl-2 col-span-2 break-words">{row.cnicOfGuest}</TableCell>
+                                                <TableCell className="pl-2 col-span-2 break-words">{row.addressOfGuest}</TableCell>
+                                                <TableCell className='pl-2 col-span-2 break-words'>{row.childrenNos}</TableCell>
+                                                <TableCell className="pl-2 col-span-2 break-words">{row.accompanyingFamilyMembersName}</TableCell>
+                                                <TableCell className="pl-2 col-span-3 break-words">{row.cnicOfFamilyMembers}</TableCell>
+                                                <TableCell className="pl-2 col-span-1 break-words">{row.relation}</TableCell>
                                                 <TableCell className="pl-2 col-span-3 flex flex-wrap gap-2 items-center">
                                                     {
-                                                        (state.userDetails?.role === 'super-admin' || state.userDetails?.role === 'user-out') &&
+                                                        (state.userDetails?.role === 'super-admin' || state.userDetails?.role === 'user-out-local') &&
                                                         <>
                                                             <button onClick={() => {
                                                                 setCurrentEntry(row)
@@ -404,10 +469,7 @@ function PakToIran() {
                                                     }
                                                     {
                                                         state.userDetails?.role !== 'admin' &&
-                                                        <button onClick={() => {
-                                                            setOpenPrintToken(true)
-                                                            setCurrentEntry(row)
-                                                        }} className='py-1 px-2 rounded-md bg-blue-400'>Out </button>
+                                                        <button onClick={() => addOutEntry(row)} className='py-1 px-2 rounded-md bg-blue-400'>{inEntry === row._id ? <Loader height='h-4' width='w-4' /> : 'Out'} </button>
                                                     }
                                                 </TableCell>
                                             </TableRow>
@@ -440,23 +502,23 @@ function PakToIran() {
                                     <TableBody>
                                         {data.map((row: any, index) => (
                                             <TableRow key={index} className='grid grid-cols-[repeat(18,minmax(0,1fr))] hover:bg-inherit'>
-                                                <TableCell className="pl-2 col-span-1">{index + 1}</TableCell>
-                                                <TableCell className='pl-2 col-span-1'>{row.name}</TableCell>
-                                                <TableCell className="pl-2 col-span-1">{row.fName}</TableCell>
-                                                <TableCell className="pl-2 col-span-2">{row.cnic}</TableCell>
-                                                <TableCell className='pl-2 col-span-2'>{row.address}</TableCell>
-                                                <TableCell className='pl-2 col-span-1'>{row.driverName}</TableCell>
-                                                <TableCell className="pl-2 col-span-1">{row.secondSeater}</TableCell>
-                                                <TableCell className="pl-2 col-span-1">{row.chassisNumber}</TableCell>
-                                                <TableCell className="pl-2 col-span-1">{row.engineNumber}</TableCell>
-                                                <TableCell className="pl-2 col-span-1">{row.dateTimeOut ? dayjs(row.dateTimeOut).format('DD-MM-YYYY') : '-'}</TableCell>
-                                                <TableCell className='pl-2 col-span-1'>{row.dateTimeOut ? dayjs(row.dateTimeOut).format('H:mm A') : '-'}</TableCell>
-                                                <TableCell className="pl-2 col-span-1">{row.dateTimeIn ? dayjs(row.dateTimeIn).format('DD-MM-YYYY') : '-'}</TableCell>
-                                                <TableCell className='pl-2 col-span-1'>{row.dateTimeIn ? dayjs(row.dateTimeIn).format('H:mm A') : '-'}</TableCell>
-                                                <TableCell className="pl-2 col-span-1">{row.regnNo}</TableCell>
+                                                <TableCell className="pl-2 col-span-1 break-words">{index + 1}</TableCell>
+                                                <TableCell className='pl-2 col-span-1 break-words'>{row.name}</TableCell>
+                                                <TableCell className="pl-2 col-span-1 break-words">{row.fName}</TableCell>
+                                                <TableCell className="pl-2 col-span-2 break-words">{row.cnic}</TableCell>
+                                                <TableCell className='pl-2 col-span-2 break-words'>{row.address}</TableCell>
+                                                <TableCell className='pl-2 col-span-1 break-words'>{row.driverName}</TableCell>
+                                                <TableCell className="pl-2 col-span-1 break-words">{row.secondSeater}</TableCell>
+                                                <TableCell className="pl-2 col-span-1 break-words">{row.chassisNumber}</TableCell>
+                                                <TableCell className="pl-2 col-span-1 break-words">{row.engineNumber}</TableCell>
+                                                <TableCell className="pl-2 col-span-1 break-words">{row.dateTimeOut ? dayjs(row.dateTimeOut).format('DD-MM-YYYY') : '-'}</TableCell>
+                                                <TableCell className='pl-2 col-span-1 break-words'>{row.dateTimeOut ? dayjs(row.dateTimeOut).format('H:mm A') : '-'}</TableCell>
+                                                <TableCell className="pl-2 col-span-1 break-words">{row.dateTimeIn ? dayjs(row.dateTimeIn).format('DD-MM-YYYY') : '-'}</TableCell>
+                                                <TableCell className='pl-2 col-span-1 break-words'>{row.dateTimeIn ? dayjs(row.dateTimeIn).format('H:mm A') : '-'}</TableCell>
+                                                <TableCell className="pl-2 col-span-1 break-words">{row.regnNo}</TableCell>
                                                 <TableCell className="pl-2 col-span-2 flex flex-wrap gap-2 items-center">
                                                     {
-                                                        (state.userDetails?.role === 'super-admin' || state.userDetails?.role === 'user-out') &&
+                                                        (state.userDetails?.role === 'super-admin' || state.userDetails?.role === 'user-out-fuel-trade') &&
                                                         <>
                                                             <button onClick={() => {
                                                                 setCurrentEntry(row)
@@ -558,13 +620,14 @@ function PakToIran() {
                                                                     }
                                                                 </div>
                                                                 <div className='mt-3'>
-                                                                    <QRCodeSVG size={150} value={`https://rajay-xing.vercel.app/irantopak?type=${currentEntry?.type}&search=${currentEntry._id}`} />
+                                                                    <QRCodeSVG size={150} value={`http://192.168.0.148:3000/irantopak?type=${currentEntry?.type}&search=${currentEntry._id}`} />
                                                                 </div>
                                                             </div>
                                                             <div className='text-base flex flex-col gap-2 font-bold text-zinc-800'>
                                                                 <p><span className='text-primary'>Name:</span> {currentEntry?.name}</p>
                                                                 <p><span className='text-primary'>CNIC:</span> {currentEntry?.cnic}</p>
                                                                 <p><span className='text-primary'>Driver Name:</span> {currentEntry?.driverName ?? '-'}</p>
+                                                                <p><span className='text-primary'>Reg No:</span> {currentEntry?.regnNo ? currentEntry?.regnNo : '-'}</p>
                                                                 <p><span className='text-primary'>Issued By:</span> {state.userDetails?.name ?? '-'}</p>
                                                                 <p><span className='text-primary'>Token Number:</span> {tokenLength + 1 ?? '-'}</p>
                                                             </div>
@@ -572,7 +635,7 @@ function PakToIran() {
                                                 }
 
                                                 {
-                                                    image &&
+                                                    !openWebcam &&
                                                     <div className='flex justify-end pt-5 border-t mt-5 print:hidden'>
                                                         <button onClick={createToken} disabled={tokenLoading} className='w-[120px] py-3 font-semibold bg-primary text-white rounded-md'>{tokenLoading ? <Loader height='h-4' width='w-4' /> : 'Print'}</button>
                                                     </div>

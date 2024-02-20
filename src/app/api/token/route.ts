@@ -13,7 +13,9 @@ export async function POST(request: NextRequest) {
         if (!body.type && !body.name && !body.cnic && !body.driverName && !body.entryId) {
             throw new CustomError('Please fill all the fields', 400)
         }
-        await Entry.findOneAndUpdate({ _id: body.entryId }, { dateTimeOut: new Date() })
+        await Entry.findOneAndUpdate({ _id: body.entryId }, {
+            dateTimeOut: new Date(new Date().getTime() - new Date().getTimezoneOffset() * 60000)
+        })
 
         let data = {
             type: body.type,

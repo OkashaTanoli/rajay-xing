@@ -18,6 +18,9 @@ export async function DELETE(request: NextRequest, params: { params: { id: strin
 
 export async function PATCH(request: NextRequest, params: { params: { id: string } }) {
     await connect()
+    let details = JSON.parse(request.headers.get('verifiedJwt') as string)
+    console.log('details ==>> ', details);
+
     try {
         let body = await request.json()
 
@@ -51,11 +54,15 @@ export async function PATCH(request: NextRequest, params: { params: { id: string
                 chassisNumber: body.chassisNumber,
                 engineNumber: body.engineNumber,
                 regnNo: body.regnNo,
+                destination: body.destination
             }
         }
         console.log(data);
 
         let entry = await Entry.findOneAndUpdate({ _id: params.params.id }, { ...data })
+        if (body.type === 'local' && body.isIn) {
+            await Entry.create({ ...data, dateTimeOut: null, dateTimeIn: null, createdBy: details.id })
+        }
         return NextResponse.json({ status: 'success', message: 'Entry updated successfully', entry }, { status: 200 })
     }
     catch (err: any) {

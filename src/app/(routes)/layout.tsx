@@ -43,17 +43,23 @@ export default function RootLayout({
         { href: '/status', text: 'Status', icon: <TbReportSearch className="text-xl" /> },
         { href: '/manualentry', text: 'Manual Entry', icon: <MdFormatListBulletedAdd className="text-xl" /> } // Update href as needed
     ];
-    if (state.userDetails && state.userDetails.role === 'user-out') {
+    if (state.userDetails && (state.userDetails.role === 'user-out-local' || state.userDetails.role === 'user-out-fuel-trade')) {
+        links = [
+            { href: '/tokendata', text: 'Token Data', icon: < MdToken className="text-xl" /> },
+            { href: `/paktoiran?type=${state.userDetails.role === 'user-out-local' ? 'local' : 'fuelTrade'}`, text: 'Pak to Iran', icon: <HiOutlineArrowUpRight className="text-xl" /> },
+        ];
+    }
+    else if (state.userDetails && (state.userDetails.role === 'user-in-local' || state.userDetails.role === 'user-in-fuel-trade')) {
+        links = [
+            { href: '/tokendata', text: 'Token Data', icon: < MdToken className="text-xl" /> },
+            { href: `/irantopak?type=${state.userDetails.role === 'user-in-local' ? 'local' : 'fuelTrade'}`, text: 'Iran to Pak', icon: <HiOutlineArrowDownLeft className="text-xl" /> },
+        ];
+    }
+    else if (state.userDetails && state.userDetails.role === 'user-in-out-local') {
         links = [
             { href: '/tokendata', text: 'Token Data', icon: < MdToken className="text-xl" /> },
             { href: '/paktoiran?type=local', text: 'Pak to Iran', icon: <HiOutlineArrowUpRight className="text-xl" /> },
-        ];
-    }
-    else if (state.userDetails && state.userDetails.role === 'user-in') {
-        links = [
-            { href: '/tokendata', text: 'Token Data', icon: < MdToken className="text-xl" /> },
-            { href: '/irantopak?type=local', text: 'Iran to Pak', icon: <HiOutlineArrowDownLeft className="text-xl" /> },
-        ];
+            { href: '/irantopak?type=local', text: 'Iran to Pak', icon: <HiOutlineArrowDownLeft className="text-xl" /> },];
     }
     else if (state.userDetails && state.userDetails.role === 'admin') {
         links = [

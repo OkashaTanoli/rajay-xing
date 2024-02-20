@@ -175,7 +175,7 @@ const Page = () => {
       });
       return
     }
-    if (selectedFileData[0].length !== 9) {
+    if (selectedFileData[0].length !== 10) {
       toast.error('Invalid data format', {
         duration: 4000,
         position: window.matchMedia("(min-width: 600px)").matches ? "bottom-right" : "bottom-center",
@@ -201,6 +201,7 @@ const Page = () => {
         chassisNumber: item[6],
         engineNumber: item[7],
         regnNo: item[8],
+        destination: item[9]
       }
     })
     onSubmit(data)

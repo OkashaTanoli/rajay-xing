@@ -1,12 +1,12 @@
 import { z } from 'zod'
 
-function camelCaseToWords(str: string) {
+function camelCaseToWords(str:string) {
     return str
-        // Insert a space before all caps
-        .replace(/([A-Z])/g, ' $1')
-        // Make the first character uppercase
-        .replace(/^./, function (str) { return str.toUpperCase(); })
-}
+      // Insert a space before all caps
+      .replace(/([A-Z])/g, ' $1')
+      // Make the first character uppercase
+      .replace(/^./, function(str){ return str.toUpperCase(); })
+  }
 
 export const signUpSchema = z.object({
     name: z.string().min(1, "Name is required").max(20, "User name can not be more than 20 letters"),
@@ -70,6 +70,7 @@ export const formSchema = z.object({
     chassisNumber: z.string().optional(),
     engineNumber: z.string().optional(),
     regnNo: z.string().optional(),
+    destination: z.string().optional(),
 })
 // .superRefine((data: any, ctx) => {
 //     let isValid = true;

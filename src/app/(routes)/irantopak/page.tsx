@@ -16,6 +16,8 @@ import dayjs from 'dayjs';
 import EditForm from '@/components/irantopak/editFrom';
 import Link from 'next/link';
 import { ContextApi } from '@/context/context';
+import utc from 'dayjs/plugin/utc';
+dayjs.extend(utc);
 
 function IranToPak() {
 
@@ -71,10 +73,21 @@ function IranToPak() {
         if (type !== 'local' && type !== 'fuelTrade') {
             router.push(`/irantopak?type=local`)
         }
-        else {
-            fetchData()
+        else if ((state.userDetails && state.userDetails.role === 'user-in-local') && type === 'fuelTrade') {
+            router.push(`/irantopak?type=local`)
         }
-    }, [type, search])
+        else if ((state.userDetails && state.userDetails.role === 'user-in-fuel-trade') && type === 'local') {
+            router.push(`/irantopak?type=fuelTrade`)
+        }
+        else if (state.userDetails && state.userDetails.role === 'user-in-out-local' && type === 'fuelTrade') {
+            router.push(`/irantopak?type=local`)
+        }
+        else {
+            if (state.userDetails && ((state.userDetails?.role === 'user-in-local' && type === 'local') || (state.userDetails.role === 'user-in-fuel-trade' && type === 'fuelTrade') || state.userDetails.role === 'super-admin' || state.userDetails.role === 'admin' || (state.userDetails?.role === 'user-in-out-local' && type === 'local'))) {
+                fetchData()
+            }
+        }
+    }, [type, search, state.userDetails])
 
 
     const changeType = (value: string) => {
@@ -131,7 +144,7 @@ function IranToPak() {
                 headers: {
                     'Content-type': 'application/json',
                 },
-                body: JSON.stringify({ ...row, dateTimeIn: new Date() })
+                body: JSON.stringify({ ...row, dateTimeIn: new Date(new Date().getTime() - new Date().getTimezoneOffset() * 60000), isIn: true })
             })
             const resData = await response.json()
             if (resData.status === 'error') {
@@ -170,6 +183,16 @@ function IranToPak() {
         }
     }
 
+
+
+    function isDateMoreThanAMonthAgo(dateString: Date) {
+        const date = new Date(dateString);
+        const currentDate = new Date(); // Step 1: Get current date
+        const oneMonthAgo = new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, currentDate.getDate()); // Step 2: Subtract a month
+        return date < oneMonthAgo; // Step 3: Compare the dates
+    }
+
+
     return (
         <div className='mt-10'>
             <Toaster />
@@ -183,10 +206,13 @@ function IranToPak() {
             <div className='flex justify-between items-center mt-3'>
                 <h1 className='text-base sm:text-xl text-red-500'>Crossed Vehs : {!loading && data.length ? data.length : '-'}</h1>
                 <div className='flex gap-2'>
-                    <select value={type!} onChange={(e) => changeType(e.target.value)} className='py-2 px-4 text-sm text-zinc-800 shadow-[0_0_15px_rgba(0,0,0,0.3)] rounded-md border-2 border-zinc-500'>
-                        <option value="local">Local</option>
-                        <option value="fuelTrade">Fuel Trade</option>
-                    </select>
+                    {
+                        (state.userDetails?.role === 'super-admin' || state.userDetails?.role === 'admin') &&
+                        <select value={type!} onChange={(e) => changeType(e.target.value)} className='py-2 px-4 text-sm text-zinc-800 shadow-[0_0_15px_rgba(0,0,0,0.3)] rounded-md border-2 border-zinc-500'>
+                            <option value="local">Local</option>
+                            <option value="fuelTrade">Fuel Trade</option>
+                        </select>
+                    }
                     {
                         state.userDetails?.role === 'super-admin' &&
                         <Link href={'/manualentry'}><button className='bg-primary rounded-md py-2 px-4 text-white'>Add New</button></Link>
@@ -216,10 +242,10 @@ function IranToPak() {
                                             <TableHead className="pl-2 h-auto text-white col-span-2">CNIC / شناختی کارڈ</TableHead>
                                             <TableHead className="pl-2 h-auto text-white col-span-2">Address / پتہ</TableHead>
                                             <TableHead className="pl-2 h-auto text-white col-span-2">Veh Type / گاڑی کی قسم</TableHead>
-                                            <TableHead className='pl-2 h-auto text-white col-span-2'>Time In / آنے کا وقت</TableHead>
-                                            <TableHead className="pl-2 h-auto text-white col-span-2">Date In / آنے کی تاریخ</TableHead>
-                                            <TableHead className='pl-2 h-auto text-white col-span-2'>Time Out / جانے کا وقت</TableHead>
-                                            <TableHead className="pl-2 h-auto text-white col-span-2">Date Out / جانے کی تاریخ</TableHead>
+                                            <TableHead className='pl-2 h-auto text-white col-span-2'>Date Out / آنے کا وقت</TableHead>
+                                            <TableHead className="pl-2 h-auto text-white col-span-2">Time Out / آنے کی تاریخ</TableHead>
+                                            <TableHead className='pl-2 h-auto text-white col-span-2'>Date In / جانے کا وقت</TableHead>
+                                            <TableHead className="pl-2 h-auto text-white col-span-2">Time In / جانے کی تاریخ</TableHead>
                                             <TableHead className="pl-2 h-auto text-white col-span-2">Guest Name / مہمان کا نام</TableHead>
                                             <TableHead className="pl-2 h-auto text-white col-span-2">Guest CNIC / شناختی نمبر مہمان کا</TableHead>
                                             <TableHead className="pl-2 h-auto text-white col-span-2">Guest Address / مہمان کا پتہ</TableHead>
@@ -234,26 +260,26 @@ function IranToPak() {
                                     <TableBody>
                                         {data.map((row: any, index) => (
                                             <TableRow key={index} className='grid grid-cols-[repeat(35,minmax(0,1fr))] hover:bg-inherit'>
-                                                <TableCell className="pl-2 col-span-1">{index + 1}</TableCell>
-                                                <TableCell className='pl-2 col-span-1'>{row.name}</TableCell>
-                                                <TableCell className="pl-2 col-span-2">{row.fName}</TableCell>
-                                                <TableCell className="pl-2 col-span-2">{row.cnic}</TableCell>
-                                                <TableCell className="pl-2 col-span-2">{row.address}</TableCell>
-                                                <TableCell className="pl-2 col-span-2">{row.vehsType}</TableCell>
-                                                <TableCell className="pl-2 col-span-2">{row.dateTimeOut ? dayjs(row.dateTimeOut).format('DD-MM-YYYY') : '-'}</TableCell>
-                                                <TableCell className='pl-2 col-span-2'>{row.dateTimeOut ? dayjs(row.dateTimeOut).format('H:mm A') : '-'}</TableCell>
-                                                <TableCell className="pl-2 col-span-2">{row.dateTimeIn ? dayjs(row.dateTimeIn).format('DD-MM-YYYY') : '-'}</TableCell>
-                                                <TableCell className='pl-2 col-span-2'>{row.dateTimeIn ? dayjs(row.dateTimeIn).format('H:mm A') : '-'}</TableCell>
-                                                <TableCell className="pl-2 col-span-2">{row.guestName}</TableCell>
-                                                <TableCell className="pl-2 col-span-2">{row.cnicOfGuest}</TableCell>
-                                                <TableCell className="pl-2 col-span-2">{row.addressOfGuest}</TableCell>
-                                                <TableCell className='pl-2 col-span-2'>{row.childrenNos}</TableCell>
-                                                <TableCell className="pl-2 col-span-2">{row.accompanyingFamilyMembersName}</TableCell>
-                                                <TableCell className="pl-2 col-span-3">{row.cnicOfFamilyMembers}</TableCell>
-                                                <TableCell className="pl-2 col-span-1">{row.relation}</TableCell>
+                                                <TableCell className="pl-2 col-span-1 break-words">{index + 1}</TableCell>
+                                                <TableCell className='pl-2 col-span-1 break-words'>{row.name}</TableCell>
+                                                <TableCell className="pl-2 col-span-2 break-words">{row.fName}</TableCell>
+                                                <TableCell className="pl-2 col-span-2 break-words">{row.cnic}</TableCell>
+                                                <TableCell className="pl-2 col-span-2 break-words">{row.address}</TableCell>
+                                                <TableCell className="pl-2 col-span-2 break-words">{row.vehsType}</TableCell>
+                                                <TableCell className="pl-2 col-span-2 break-words">{row.dateTimeOut ? dayjs.utc(row.dateTimeOut).format('DD-MM-YYYY') : '-'}</TableCell>
+                                                <TableCell className='pl-2 col-span-2 break-words'>{row.dateTimeOut ? dayjs.utc(row.dateTimeOut).format('H:mm A') : '-'}</TableCell>
+                                                <TableCell className="pl-2 col-span-2 break-words">{row.dateTimeIn ? dayjs.utc(row.dateTimeIn).format('DD-MM-YYYY') : '-'}</TableCell>
+                                                <TableCell className='pl-2 col-span-2 break-words'>{row.dateTimeIn ? dayjs.utc(row.dateTimeIn).format('H:mm A') : '-'}</TableCell>
+                                                <TableCell className="pl-2 col-span-2 break-words">{row.guestName}</TableCell>
+                                                <TableCell className="pl-2 col-span-2 break-words">{row.cnicOfGuest}</TableCell>
+                                                <TableCell className="pl-2 col-span-2 break-words">{row.addressOfGuest}</TableCell>
+                                                <TableCell className='pl-2 col-span-2 break-words'>{row.childrenNos}</TableCell>
+                                                <TableCell className="pl-2 col-span-2 break-words">{row.accompanyingFamilyMembersName}</TableCell>
+                                                <TableCell className="pl-2 col-span-3 break-words">{row.cnicOfFamilyMembers}</TableCell>
+                                                <TableCell className="pl-2 col-span-1 break-words">{row.relation}</TableCell>
                                                 <TableCell className="pl-2 col-span-3 flex flex-wrap gap-2 items-center">
                                                     {
-                                                        state.userDetails.role === 'super-admin' &&
+                                                        state.userDetails?.role === 'super-admin' &&
                                                         <>
                                                             <button onClick={() => {
                                                                 setCurrentEntry(row)
@@ -263,7 +289,7 @@ function IranToPak() {
                                                         </>
                                                     }
                                                     {
-                                                        state.userDetails.role !== 'admin' &&
+                                                        state.userDetails?.role !== 'admin' &&
                                                         <button onClick={() => addInEntry(row)} className='py-1 px-2 rounded-md bg-blue-400'>{inEntry === row._id ? <Loader height='h-4' width='w-4' /> : 'In'}</button>
                                                     }
                                                 </TableCell>
@@ -296,24 +322,24 @@ function IranToPak() {
                                     </TableHeader>
                                     <TableBody>
                                         {data.map((row: any, index) => (
-                                            <TableRow key={index} className='grid grid-cols-[repeat(18,minmax(0,1fr))] hover:bg-inherit'>
-                                                <TableCell className="pl-2 col-span-1">{index + 1}</TableCell>
-                                                <TableCell className='pl-2 col-span-1'>{row.name}</TableCell>
-                                                <TableCell className="pl-2 col-span-1">{row.fName}</TableCell>
-                                                <TableCell className="pl-2 col-span-2">{row.cnic}</TableCell>
-                                                <TableCell className='pl-2 col-span-2'>{row.address}</TableCell>
-                                                <TableCell className='pl-2 col-span-1'>{row.driverName}</TableCell>
-                                                <TableCell className="pl-2 col-span-1">{row.secondSeater}</TableCell>
-                                                <TableCell className="pl-2 col-span-1">{row.chassisNumber}</TableCell>
-                                                <TableCell className="pl-2 col-span-1">{row.engineNumber}</TableCell>
-                                                <TableCell className="pl-2 col-span-1">{row.dateTimeOut ? dayjs(row.dateTimeOut).format('DD-MM-YYYY') : '-'}</TableCell>
-                                                <TableCell className='pl-2 col-span-1'>{row.dateTimeOut ? dayjs(row.dateTimeOut).format('H:mm A') : '-'}</TableCell>
-                                                <TableCell className="pl-2 col-span-1">{row.dateTimeIn ? dayjs(row.dateTimeIn).format('DD-MM-YYYY') : '-'}</TableCell>
-                                                <TableCell className='pl-2 col-span-1'>{row.dateTimeIn ? dayjs(row.dateTimeIn).format('H:mm A') : '-'}</TableCell>
-                                                <TableCell className="pl-2 col-span-1">{row.regnNo}</TableCell>
+                                            <TableRow key={index} className={`${isDateMoreThanAMonthAgo(row.dateTimeOut) && 'bg-red-100'} grid grid-cols-[repeat(18,minmax(0,1fr))] hover:bg-inherit`}>
+                                                <TableCell className="pl-2 col-span-1 break-words">{index + 1} {isDateMoreThanAMonthAgo(row.dateTimeOut) && <span className='text-red-500 ml-2 font-semibold'>Expired</span>}</TableCell>
+                                                <TableCell className='pl-2 col-span-1 break-words'>{row.name}</TableCell>
+                                                <TableCell className="pl-2 col-span-1 break-words">{row.fName}</TableCell>
+                                                <TableCell className="pl-2 col-span-2 break-words">{row.cnic}</TableCell>
+                                                <TableCell className='pl-2 col-span-2 break-words'>{row.address}</TableCell>
+                                                <TableCell className='pl-2 col-span-1 break-words'>{row.driverName}</TableCell>
+                                                <TableCell className="pl-2 col-span-1 break-words">{row.secondSeater}</TableCell>
+                                                <TableCell className="pl-2 col-span-1 break-words">{row.chassisNumber}</TableCell>
+                                                <TableCell className="pl-2 col-span-1 break-words">{row.engineNumber}</TableCell>
+                                                <TableCell className="pl-2 col-span-1 break-words">{row.dateTimeOut ? dayjs.utc(row.dateTimeOut).format('DD-MM-YYYY') : '-'}</TableCell>
+                                                <TableCell className='pl-2 col-span-1 break-words'>{row.dateTimeOut ? dayjs.utc(row.dateTimeOut).format('H:mm A') : '-'}</TableCell>
+                                                <TableCell className="pl-2 col-span-1 break-words">{row.dateTimeIn ? dayjs.utc(row.dateTimeIn).format('DD-MM-YYYY') : '-'}</TableCell>
+                                                <TableCell className='pl-2 col-span-1 break-words'>{row.dateTimeIn ? dayjs.utc(row.dateTimeIn).format('H:mm A') : '-'}</TableCell>
+                                                <TableCell className="pl-2 col-span-1 break-words">{row.regnNo}</TableCell>
                                                 <TableCell className="pl-2 col-span-2 flex gap-2 items-center">
                                                     {
-                                                        state.userDetails.role === 'super-admin' &&
+                                                        state.userDetails?.role === 'super-admin' &&
                                                         <>
                                                             <button onClick={() => {
                                                                 setCurrentEntry(row)
@@ -323,7 +349,7 @@ function IranToPak() {
                                                         </>
                                                     }
                                                     {
-                                                        state.userDetails.role !== 'admin' &&
+                                                        state.userDetails?.role !== 'admin' &&
                                                         <button onClick={() => addInEntry(row)} className='py-1 px-2 rounded-md bg-blue-400'>{inEntry === row._id ? <Loader height='h-4' width='w-4' /> : 'In'}</button>
                                                     }
                                                 </TableCell>

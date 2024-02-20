@@ -22,6 +22,8 @@ const exportToCSV = (apiData: any, fileName: string) => {
 const Page = () => {
     const [selected, setSelected] = useState('')
     const [startDate, setStartDate] = useState('')
+    const [cnicOfPerson, setCnicOfPerson] = useState('')
+    const [destination, setDestination] = useState('')
     const [endDate, setEndDate] = useState('')
     const [loading, setLoading] = useState(false)
     const [fetchedData, setFetchedData] = useState<any>()
@@ -38,7 +40,7 @@ const Page = () => {
         try {
             const res = await fetch('/api/entry/searchbetweendates', {
                 method: "POST",
-                body: JSON.stringify({ startDate, endDate, type: selected })
+                body: JSON.stringify({ startDate, endDate, type: selected, cnicOfPerson, destination })
             })
             const data = await res.json()
             if (data.success === 'error') {
@@ -94,6 +96,25 @@ const Page = () => {
                     </div>
                     :
                     <form className="flex flex-col items-start gap-5" onSubmit={onSubmit}>
+                        <div className="flex flex-col md:flex-row gap-5">
+                            <div className="">
+                                <h1 className="text-zinc-700 font-semibold">CNIC Of Person ( Optional )</h1>
+                                <input onChange={(e) => setCnicOfPerson(e.target.value)} type="text" className="w-[300px] border py-3 px-5 border-zinc-300 rounded-md" />
+                            </div>
+                            {
+                                selected === 'fuelTrade' &&
+                                <div className="">
+                                    <h1 className="text-zinc-700 font-semibold">Select Destination ( Optional )</h1>
+                                    <select id="destination" onChange={(e) => setDestination(e.target.value)} className="w-[300px] border py-3 px-5 border-zinc-300 rounded-md">
+                                        <option value="">All</option>
+                                        <option value="dalbandin">Dalbandin</option>
+                                        <option value="nokhundi">Nokhundi</option>
+                                        <option value="rajay">Rajay</option>
+                                        <option value="talab">Talab</option>
+                                    </select>
+                                </div>
+                            }
+                        </div>
                         <div className="flex flex-col md:flex-row gap-5">
                             <div className="">
                                 <h1 className="text-zinc-700 font-semibold">From Date</h1>

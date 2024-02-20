@@ -226,18 +226,22 @@ function TokenData() {
                                                 <h1 className='text-base font-bold text-zinc-800'>RAJAY CROSSING</h1>
                                             </div>
                                             <div className=''>
-                                                <div className='flex flex-col items-center'>
-                                                    <Image src={currentTokenToPrint?.image} alt='image' className='h-full object-cover' width={200} height={200} />
-                                                </div>
+                                                {
+                                                    currentTokenToPrint?.image &&
+                                                    <div className='flex flex-col items-center'>
+                                                        <Image src={currentTokenToPrint?.image} alt='image' className='h-full object-cover' width={200} height={200} />
+                                                    </div>
+                                                }
                                             </div>
                                             <div className='mt-3'>
-                                                <QRCodeSVG size={150} value={`https://rajay-xing.vercel.app/irantopak?type=${currentTokenToPrint?.entry?.type}&search=${currentTokenToPrint?.entry?._id}`} />
+                                                <QRCodeSVG size={150} value={`http://192.168.0.148:3000/irantopak?type=${currentTokenToPrint?.entry?.type}&search=${currentTokenToPrint?.entry?._id}`} />
                                             </div>
                                         </div>
                                         <div className='text-base flex flex-col gap-2 font-bold text-zinc-800'>
                                             <p><span className='text-primary'>Name:</span> {currentTokenToPrint?.name}</p>
                                             <p><span className='text-primary'>CNIC:</span> {currentTokenToPrint?.cnic}</p>
                                             <p><span className='text-primary'>Driver Name:</span> {currentTokenToPrint?.driverName ? currentTokenToPrint?.driverName : '-'}</p>
+                                            <p><span className='text-primary'>Reg No:</span> {currentTokenToPrint?.regnNo ? currentTokenToPrint?.regnNo : '-'}</p>
                                             <p><span className='text-primary'>Issued By:</span> {currentTokenToPrint?.createdBy?.name ?? '-'}</p>
                                             <p><span className='text-primary'>Token Number:</span> {currentTokenToPrint.id ?? '-'}</p>
                                         </div>

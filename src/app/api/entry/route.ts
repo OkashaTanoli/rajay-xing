@@ -13,6 +13,11 @@ export async function POST(request: NextRequest) {
         }
         await connect()
         let body: IFormSchema = await request.json()
+        let oldEntry = await Entry.find({ cnic: body.cnic })
+        if (body.type === 'local' && oldEntry.length) {
+            throw new CustomError('Duplicate Entry', 409)
+        }
+
         let details = JSON.parse(request.headers.get('verifiedJwt') as string)
 
         let data: any = {
@@ -46,6 +51,7 @@ export async function POST(request: NextRequest) {
                 chassisNumber: body.chassisNumber,
                 engineNumber: body.engineNumber,
                 regnNo: body.regnNo,
+                destination: body.destination
             }
         }
         else {
@@ -93,6 +99,7 @@ export async function GET(request: NextRequest) {
                 { chassisNumber: regex },
                 { engineNumber: regex },
                 { regnNo: regex },
+                { destination: regex },
                 // ... add any other fields you want to search
             ]
         };
