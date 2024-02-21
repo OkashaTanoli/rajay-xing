@@ -28,3 +28,26 @@ export async function POST(request: NextRequest) {
 
 }
 
+
+
+
+export async function DELETE(request: NextRequest) {
+    await connect();
+    try {
+        const { ids } = await request.json();
+        if (!ids || ids.length === 0) {
+            throw new CustomError('No IDs provided', 400);
+        }
+
+        const result = await Entry.deleteMany({ _id: { $in: ids } });
+
+        if (result.deletedCount === 0) {
+            throw new CustomError('No entries found to delete', 404);
+        }
+
+        return NextResponse.json({ status: 'success', message: 'Entries deleted successfully', deletedCount: result.deletedCount }, { status: 200 });
+    } catch (err: any) {
+        return NextResponse.json({ message: err.message, status: 'error' }, { status: err.statusCode ? err.statusCode : 500 })
+
+    }
+}
