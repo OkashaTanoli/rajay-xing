@@ -59,7 +59,9 @@ export default function RootLayout({
         links = [
             { href: '/tokendata', text: 'Token Data', icon: < MdToken className="text-xl" /> },
             { href: '/paktoiran?type=local', text: 'Pak to Iran', icon: <HiOutlineArrowUpRight className="text-xl" /> },
-            { href: '/irantopak?type=local', text: 'Iran to Pak', icon: <HiOutlineArrowDownLeft className="text-xl" /> },];
+            { href: '/irantopak?type=local', text: 'Iran to Pak', icon: <HiOutlineArrowDownLeft className="text-xl" /> },
+            { href: '/manualentry', text: 'Manual Entry', icon: <MdFormatListBulletedAdd className="text-xl" /> } // Update href as needed
+        ];
     }
     else if (state.userDetails && state.userDetails.role === 'admin') {
         links = [
@@ -68,6 +70,7 @@ export default function RootLayout({
             { href: '/paktoiran?type=local', text: 'Pak to Iran', icon: <HiOutlineArrowUpRight className="text-xl" /> },
             { href: '/irantopak?type=local', text: 'Iran to Pak', icon: <HiOutlineArrowDownLeft className="text-xl" /> },
             { href: '/status', text: 'Status', icon: <TbReportSearch className="text-xl" /> },
+            { href: '/manualentry', text: 'Manual Entry', icon: <MdFormatListBulletedAdd className="text-xl" /> } // Update href as needed
         ];
     }
 

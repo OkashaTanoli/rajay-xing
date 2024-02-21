@@ -37,6 +37,8 @@ function IranToPak() {
     const [tempSearch, setTempSearch] = useState(search ? search : '')
     const [currentEntry, setCurrentEntry] = useState<any>()
     const [openEdit, setOpenEdit] = useState(false)
+    const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
+    const [deleteBulkLoading, setDeleteBulkLoading] = useState(false)
 
     const [inEntry, setInEntry] = useState('')
 
@@ -91,6 +93,7 @@ function IranToPak() {
 
 
     const changeType = (value: string) => {
+        setSelectedOptions([])
         router.push(`/irantopak?type=${value}&search=${search ? search : ''}`)
     }
 
@@ -134,6 +137,60 @@ function IranToPak() {
             setDeleteEntryId('')
         }
     }
+
+
+    const deleteEntries = async (ids: string[]) => {
+        setDeleteBulkLoading(true)
+        try {
+            // Assuming your API endpoint can accept an array of IDs for deletion
+            const res = await fetch(`/api/entry/bulk`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ ids }), // Send the array of IDs as a JSON payload
+            });
+
+            const data = await res.json();
+
+            if (data.status === 'error') {
+                throw new Error(data.message);
+            }
+
+            // Display success message
+            toast.success(data.message, {
+                duration: 3000,
+                position: window.matchMedia("(min-width: 600px)").matches ? "bottom-right" : "bottom-center",
+                style: {
+                    backgroundColor: '#d9d9d9',
+                    padding: window.matchMedia("(min-width: 600px)").matches ? "20px 30px" : "15px 20px",
+                    fontSize: '14px',
+                    fontWeight: 'bold',
+                },
+            });
+
+            // Refetch data to update the UI after deletion
+            fetchData();
+        } catch (err: any) {
+            // Handle any errors that occurred during the deletion process
+            toast.error(err.message, {
+                duration: 4000,
+                position: window.matchMedia("(min-width: 600px)").matches ? "bottom-right" : "bottom-center",
+                style: {
+                    backgroundColor: '#d9d9d9',
+                    padding: window.matchMedia("(min-width: 600px)").matches ? "20px 30px" : "15px 20px",
+                    fontSize: '14px',
+                    fontWeight: 'bold',
+                },
+            });
+        } finally {
+            // Reset any related state or perform cleanup as necessary
+            setDeleteEntryId(''); // Adjust accordingly if managing deletion IDs state
+            setDeleteBulkLoading(false)
+            setSelectedOptions([])
+        }
+    };
+
 
 
     const addInEntry = async (row: any) => {
@@ -193,6 +250,29 @@ function IranToPak() {
     }
 
 
+
+
+
+
+    // Handle checkbox change
+    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const value = event.target.value;
+        setSelectedOptions((prev) => {
+            if (prev.includes(value)) {
+                // Remove the item from the array if it is already selected
+                return prev.filter((item) => item !== value);
+            } else {
+                // Add the item to the array if it is not already selected
+                return [...prev, value];
+            }
+        });
+    };
+
+    const handleSelectAll = () => {
+        setSelectedOptions(data.map((entry: any) => entry._id));
+    };
+
+
     return (
         <div className='mt-10'>
             <Toaster />
@@ -219,6 +299,15 @@ function IranToPak() {
                     }
                 </div>
             </div>
+            {
+                selectedOptions.length && data.length && state.userDetails && state.userDetails.role === 'super-admin' ?
+                    <div className='mt-5 flex gap-3'>
+                        <button onClick={() => deleteEntries(selectedOptions)} className='w-[120px] h-[40px] flex justify-center items-center font-semibold  bg-red-400 rounded-md border-none'>{deleteBulkLoading ? <Loader height='h-4' width='w-4' /> : 'Delete'} </button>
+                        <button onClick={() => handleSelectAll()} className='w-[120px] h-[40px] flex justify-center items-center font-semibold  bg-blue-400 rounded-md border-none'>Select All</button>
+                    </div>
+                    :
+                    null
+            }
             <div className='mt-5 w-full overflow-auto'>
                 {
                     loading ?
@@ -260,7 +349,20 @@ function IranToPak() {
                                     <TableBody>
                                         {data.map((row: any, index) => (
                                             <TableRow key={index} className='grid grid-cols-[repeat(35,minmax(0,1fr))] hover:bg-inherit'>
-                                                <TableCell className="pl-2 col-span-1 break-words">{index + 1}</TableCell>
+                                                <TableCell className="pl-2 col-span-1 break-words">
+                                                    {
+                                                        state.userDetails && state.userDetails.role === 'super-admin' &&
+                                                        <input
+                                                            type="checkbox"
+                                                            id={row._id}
+                                                            value={row._id}
+                                                            checked={selectedOptions.includes(row._id)}
+                                                            onChange={handleChange}
+                                                            className='mr-2'
+                                                        />
+                                                    }
+                                                    {index + 1}
+                                                </TableCell>
                                                 <TableCell className='pl-2 col-span-1 break-words'>{row.name}</TableCell>
                                                 <TableCell className="pl-2 col-span-2 break-words">{row.fName}</TableCell>
                                                 <TableCell className="pl-2 col-span-2 break-words">{row.cnic}</TableCell>
@@ -323,7 +425,21 @@ function IranToPak() {
                                     <TableBody>
                                         {data.map((row: any, index) => (
                                             <TableRow key={index} className={`${isDateMoreThanAMonthAgo(row.dateTimeOut) && 'bg-red-100'} grid grid-cols-[repeat(18,minmax(0,1fr))] hover:bg-inherit`}>
-                                                <TableCell className="pl-2 col-span-1 break-words">{index + 1} {isDateMoreThanAMonthAgo(row.dateTimeOut) && <span className='text-red-500 ml-2 font-semibold'>Expired</span>}</TableCell>
+                                                <TableCell className="pl-2 col-span-1 break-words">
+                                                    {
+                                                        state.userDetails && state.userDetails.role === 'super-admin' &&
+                                                        <input
+                                                            type="checkbox"
+                                                            id={row._id}
+                                                            value={row._id}
+                                                            checked={selectedOptions.includes(row._id)}
+                                                            onChange={handleChange}
+                                                            className='mr-2'
+                                                        />
+                                                    }
+                                                    {index + 1}
+                                                    {isDateMoreThanAMonthAgo(row.dateTimeOut) && <span className='text-red-500 ml-2 font-semibold'>Expired</span>}
+                                                </TableCell>
                                                 <TableCell className='pl-2 col-span-1 break-words'>{row.name}</TableCell>
                                                 <TableCell className="pl-2 col-span-1 break-words">{row.fName}</TableCell>
                                                 <TableCell className="pl-2 col-span-2 break-words">{row.cnic}</TableCell>

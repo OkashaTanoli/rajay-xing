@@ -8,11 +8,14 @@ import mongoose from "mongoose";
 export async function POST(request: NextRequest) {
     try {
         let user_details = JSON.parse(request.headers.get('verifiedJwt') as string)
-        if (user_details.role !== 'super-admin') {
+        if (user_details.role !== 'super-admin' && user_details.role !== 'admin' && user_details.role !== 'user-in-out-local') {
             throw new CustomError('You are not authorized to perform this action', 401)
         }
         await connect()
         let body: IFormSchema = await request.json()
+        if (user_details.role === 'user-in-out-local' && body.type === 'fuelTrade') {
+            throw new CustomError('You are not authorized to perform this action', 401)
+        }
         let oldEntry = await Entry.find({ cnic: body.cnic })
         if (body.type === 'local' && oldEntry.length) {
             throw new CustomError('Duplicate Entry', 409)

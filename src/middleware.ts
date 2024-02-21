@@ -101,12 +101,12 @@ const userInRestrictedRoutes = [
 const userInOutLocalRestrictedRoutes = [
     '/',
     '/status',
-    '/manualentry',
+    // '/manualentry',
     '/api/entry/bulk',
     '/signup'
 ]
 const adminRestrictedRoutes = [
-    '/manualentry',
+    // '/manualentry',
     '/api/entry/bulk',
     '/signup'
 ]

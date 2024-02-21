@@ -1,15 +1,18 @@
 'use client'
 
 import { Loader } from '@/components/common';
+import { ContextApi } from '@/context/context';
 import { IFormSchema, formSchema } from '@/utils/zodschema';
 import { zodResolver } from '@hookform/resolvers/zod';
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Toaster, toast } from 'react-hot-toast';
 
 function ManualEntry() {
 
     // const [type, setType] = useState('local')
+    const { state } = useContext(ContextApi)
+
     const [loading, setLoading] = useState(false)
 
 
@@ -114,7 +117,10 @@ function ManualEntry() {
                             <label htmlFor="select" className='text-sm text-zinc-700 font-semibold'>Select / منتخب کریں۔</label>
                             <select id="select" {...register("type")} className='border border-zinc-300 text-zinc-800 focus:outline-none py-3 px-4 rounded-lg text-base'>
                                 <option value="local">Local</option>
-                                <option value="fuelTrade">Fuel Trade</option>
+                                {
+                                    state.userDetails && (state.userDetails.role === 'super-admin' || state.userDetails.role === 'admin') &&
+                                    <option value="fuelTrade">Fuel Trade</option>
+                                }
                             </select>
                         </div>
                         <div className='flex flex-col gap-1'>
