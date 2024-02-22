@@ -188,34 +188,34 @@ function PakToIran() {
         }
     }, [type, search, state.userDetails])
 
-    useEffect(() => {
-        async function getTokenLength() {
-            try {
-                setTokenLengthLoading(true)
-                const res = await fetch('/api/token/gettokenlength', { cache: 'no-store' })
-                const data = await res.json()
-                if (data.status === 'error') {
-                    throw new Error(data.message)
-                }
-                setTokenLength(data.data.token_length)
+    async function getTokenLength() {
+        try {
+            setTokenLengthLoading(true)
+            const res = await fetch('/api/token/gettokenlength', { cache: 'no-store' })
+            const data = await res.json()
+            if (data.status === 'error') {
+                throw new Error(data.message)
             }
-            catch (err: any) {
-                toast.error(err.message, {
-                    duration: 4000,
-                    position: window.matchMedia("(min-width: 600px)").matches ? "bottom-right" : "bottom-center",
-
-                    style: {
-                        backgroundColor: '#d9d9d9',
-                        padding: window.matchMedia("(min-width: 600px)").matches ? "20px 30px" : "15px 20px",
-                        fontSize: '14px',
-                        fontWeight: 'bold'
-                    },
-                });
-            }
-            finally {
-                setTokenLengthLoading(false)
-            }
+            setTokenLength(data.data.token_length)
         }
+        catch (err: any) {
+            toast.error(err.message, {
+                duration: 4000,
+                position: window.matchMedia("(min-width: 600px)").matches ? "bottom-right" : "bottom-center",
+
+                style: {
+                    backgroundColor: '#d9d9d9',
+                    padding: window.matchMedia("(min-width: 600px)").matches ? "20px 30px" : "15px 20px",
+                    fontSize: '14px',
+                    fontWeight: 'bold'
+                },
+            });
+        }
+        finally {
+            setTokenLengthLoading(false)
+        }
+    }
+    useEffect(() => {
         getTokenLength()
     }, [])
 
@@ -450,7 +450,9 @@ function PakToIran() {
 
     return (
         <div className='mt-10'>
-            <Toaster />
+            <div className='print:hidden'>
+                <Toaster />
+            </div>
             <div className='block sm:flex justify-between items-center'>
                 <h1 className='text-2xl font-bold text-zinc-800'>Pak to Iran</h1>
                 <div className='flex gap-2 mt-3 sm:mt-0'>
@@ -649,6 +651,7 @@ function PakToIran() {
                                                         <button onClick={() => {
                                                             setOpenPrintToken(true)
                                                             setCurrentEntry(row)
+                                                            getTokenLength()
                                                         }} className='py-1 px-2 rounded-md bg-blue-400'>Out </button>
                                                     }
                                                 </TableCell>
