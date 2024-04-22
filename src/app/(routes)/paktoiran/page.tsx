@@ -558,7 +558,7 @@ function PakToIran() {
                                                 <TableCell className="pl-2 col-span-1 break-words">{row.relation}</TableCell>
                                                 <TableCell className="pl-2 col-span-3 flex flex-wrap gap-2 items-center">
                                                     {
-                                                        (state.userDetails?.role === 'super-admin' || state.userDetails?.role === 'user-out-local') &&
+                                                        (state.userDetails?.role === 'super-admin' || state.userDetails?.role === 'user-out-local' || state.userDetails?.role === 'user-in-out-local') &&
                                                         <>
                                                             <button onClick={() => {
                                                                 setCurrentEntry(row)

@@ -381,14 +381,17 @@ function IranToPak() {
                                                 <TableCell className="pl-2 col-span-1 break-words">{row.relation}</TableCell>
                                                 <TableCell className="pl-2 col-span-3 flex flex-wrap gap-2 items-center">
                                                     {
-                                                        state.userDetails?.role === 'super-admin' &&
+                                                        (state.userDetails?.role === 'super-admin' || state.userDetails?.role === 'user-in-local' || state.userDetails?.role === 'user-in-out-local') &&
                                                         <>
                                                             <button onClick={() => {
                                                                 setCurrentEntry(row)
                                                                 setOpenEdit(true)
                                                             }} className='py-1 px-2 rounded-md bg-zinc-300'>Edit</button>
-                                                            <button disabled={!!deleteEntryId} onClick={() => deleteEntry(row._id)} className='py-1 px-2 rounded-md bg-red-400'>{deleteEntryId === row._id ? <Loader height='h-4' width='w-4' /> : 'Delete'} </button>
                                                         </>
+                                                    }
+                                                    {
+                                                        state.userDetails?.role === 'super-admin' &&
+                                                        <button disabled={!!deleteEntryId} onClick={() => deleteEntry(row._id)} className='py-1 px-2 rounded-md bg-red-400'>{deleteEntryId === row._id ? <Loader height='h-4' width='w-4' /> : 'Delete'} </button>
                                                     }
                                                     {
                                                         state.userDetails?.role !== 'admin' &&
@@ -455,14 +458,17 @@ function IranToPak() {
                                                 <TableCell className="pl-2 col-span-1 break-words">{row.regnNo}</TableCell>
                                                 <TableCell className="pl-2 col-span-2 flex gap-2 items-center">
                                                     {
-                                                        state.userDetails?.role === 'super-admin' &&
+                                                        (state.userDetails?.role === 'super-admin' || state.userDetails?.role === 'user-in-fuel-trade') &&
                                                         <>
                                                             <button onClick={() => {
                                                                 setCurrentEntry(row)
                                                                 setOpenEdit(true)
                                                             }} className='py-1 px-2 rounded-md bg-zinc-300'>Edit</button>
-                                                            <button disabled={!!deleteEntryId} onClick={() => deleteEntry(row._id)} className='py-1 px-2 rounded-md bg-red-400'>{deleteEntryId === row._id ? <Loader height='h-4' width='w-4' /> : 'Delete'} </button>
                                                         </>
+                                                    }
+                                                    {
+                                                        state.userDetails?.role === 'super-admin' &&
+                                                        <button disabled={!!deleteEntryId} onClick={() => deleteEntry(row._id)} className='py-1 px-2 rounded-md bg-red-400'>{deleteEntryId === row._id ? <Loader height='h-4' width='w-4' /> : 'Delete'} </button>
                                                     }
                                                     {
                                                         state.userDetails?.role !== 'admin' &&
